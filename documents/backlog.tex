@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\title{Product Backlog}
+\author{Abhijeet Chakrabarti, Ammar Askar, Brian Quinn, Eric Lee}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem Statement}
+The music streaming industry has been surging to new heights, growing 76\% in the U.S. in 2016. Synchronizo aims to bring people together to enjoy listening to music in real-time. You can be anywhere in the world and still, listen to music with your friends who are miles away. This will be different from current music streaming services where you can share songs passively but not listen to them with people as if they were in the same room as you.
+
+\section{Background Information}
+
+\subsection{Audience}
+Our target users are people interested in sharing their taste in music and people who want a social networking aspect built around music. Additionally, target users include people controlling music at social gatherings as a group.
+
+\subsection{Similar Applications}
+Applications such as Spotify allow people to stream music alone or from playlists made by other people but does not support concurrent listening. Services such as Youtube synchronization websites allow for simultaneous music listening but in an unorganized and loose fashion.
+
+\subsection{Limitations}
+Since we allow arbitrary uploads of music files, it's entirely possible that uploaded music may be violating copyright or not be valid music to begin with. The usage of external music streaming APIs means that we are susceptible to being shut down if they feel our service imposes on their business model, or impedes on their market share. Also, the usage of this service requires a fairly stable and high speed Internet connection with enough bandwith to stream music.
+
+\section{Requirements}
+\subsection{Functional}
+
+\subsubsection{User}
+\begin{itemize}
+    \item As a user, I want to be able to listen to music simultaneously with other people.
+    
+    \item As a user, I want to to be able to upload my own music.
+    
+    \item As a user, I want to be able to stream music from a music streaming service.
+    
+    \item As a user, I want to be able to create an account.
+
+    \item As a user, I want to be able to have people follow my account.
+
+    \item As a user, I want to be able to follow other users.
+    
+    \item As a user, I want to be able to unfollow other users.
+    
+    \item As a user, I want to be able to party chat with other users in the same listening party.
+    
+    \item As a user, I want to be able to direct message other users.
+    
+    \item As a user, I want to be able to invite other users to join my listening party.
+    
+    \item As a user, I want to be able to permanently leave certain listening parties.
+    
+    \item As a user, I want my followers to be able to see the recent music I have listened to.
+    
+    \item As a user, I want the ability to block other users. 
+    
+    \item As a user, I want the ability to report other users for misconduct.
+    
+    \item As a user, I want to have a profile (picture, bio, favorite music, etc.)
+    
+    \item As a user, I want to be able to set privacy settings for my account.
+    
+    \item As a user, I want to be able to create multiple listening parties.
+    
+    \item As a user, I want to be able to see information about the album for playing tracks.
+    
+    \item As a user, I want to be able to see information about the artist for playing tracks.
+
+    \item As a user, I want to be able to control the playback of the music for everyone.
+    
+    \item As a user, I want to be able to view listener metrics and statistics.
+
+\end{itemize}
+
+\subsubsection{Admin}
+\begin{itemize}
+    \item As an admin, I want to be able to control user accounts.
+    
+    \item As an admin, I want to be able to monitor usage of the service.
+\end{itemize}
+
+\subsubsection{Customer}
+\begin{itemize}
+    \item As an advertiser, I want to be able to see data on people's taste in music so I can target ads to them.
+\end{itemize}
+
+\subsection{Non-Functional}
+\begin{itemize}
+    \item The application must run as a web-app.
+    
+    \item Must have a nice looking interface resembling a music player and a social networking site.
+    
+\end{itemize}
+
+\end{document}
