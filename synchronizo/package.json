@@ -8,13 +8,16 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "mocha spec/"
+    "test": "mocha spec/",
+    "test-coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec spec/*"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/ammaraskar/synchronizo.git"
   },
   "devDependencies": {
+    "coveralls": "^2.11.16",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "supertest": "^3.0.0"
   }

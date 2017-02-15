@@ -1,4 +1,4 @@
-# Synchronizo
+# Synchronizo [![Build Status](https://api.travis-ci.org/ammaraskar/synchronizo.svg?branch=master)](https://travis-ci.org/ammaraskar/synchronizo) [![Coverage Status](https://coveralls.io/repos/github/ammaraskar/synchronizo/badge.svg?branch=master)](https://coveralls.io/github/ammaraskar/synchronizo?branch=master)
 
 Here lives the source code for the Synchronizo webapp.
 
