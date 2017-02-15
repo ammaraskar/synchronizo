@@ -2,6 +2,7 @@
   "name": "synchronizo",
   "version": "0.0.1",
   "description": "A webapp for synchronized music listening",
+  "license": "Apache-2.0",
   "dependencies": {
     "express": "^4.14.1"
   },
