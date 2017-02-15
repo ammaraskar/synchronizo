@@ -1,4 +1,4 @@
-# Synchronizo
+# Synchronizo [![Build Status](https://api.travis-ci.org/ammaraskar/synchronizo.svg?branch=master)](https://travis-ci.org/ammaraskar/synchronizo) [![Coverage Status](https://coveralls.io/repos/github/ammaraskar/synchronizo/badge.svg?branch=master)](https://coveralls.io/github/ammaraskar/synchronizo?branch=master)
 
 Synchronizo is a node.js powered webapp that allows for users to
 simaltaenously listen to the same music by going to a simple web page.
