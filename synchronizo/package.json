@@ -1,0 +1,14 @@
+{
+  "name": "synchronizo",
+  "version": "0.0.1",
+  "description": "A webapp for synchronized music listening",
+  "dependencies":
+  {
+    "express": "~4.0.0"
+  },
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/ammaraskar/synchronizo.git"
+  }
+}
