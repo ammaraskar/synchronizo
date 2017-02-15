@@ -1,0 +1,262 @@
+\documentclass[11pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[explicit]{titlesec}
+\usepackage{color, varwidth}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{xhfill}
+\usepackage{soul}
+\graphicspath{{./images/}}
+
+%----------------------------------------------------------------------------------------
+%	SECTION HEADER STYLES
+%----------------------------------------------------------------------------------------
+\setlength{\headheight}{15pt}
+
+\definecolor{darkblue}{RGB}{0,101,135}
+\definecolor{ourblue}{RGB}{0,138,184}
+
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp\textcolor{ourblue}{|}\hsp}{0pt}{#1\Huge\bfseries}
+
+\newcommand\Centered{%
+\titleformat{\section}[hang]
+  {\normalfont\large\filcenter}{}{0em}
+  {\xrfill[0.3ex]{1.0pt}[ourblue]~\begin{varwidth}{.75\linewidth}\centering{\color{darkblue}##1}\end{varwidth}~\xrfill[0.3ex]{1.0pt}[ourblue]}
+}
+
+\newcommand\textline[4][t]{%
+  \par\smallskip\noindent\parbox[#1]{.333\textwidth}{\raggedright#2}%
+  \parbox[c]{.333\textwidth}{\centering#3}%
+  \parbox[c]{.333\textwidth}{\raggedleft#4}\par\smallskip%
+  \vspace{.5\baselineskip}
+}
+
+\titlespacing{\chapter}{12pt plus 4pt minus 2pt}{\parskip}{7pt}
+
+
+\renewcommand\sectionmark[1]{\markboth{#1}{}}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\input{./title.tex}
+
+\pagebreak
+
+\chapter{Sprint Overview}
+This sprint, being our first sprint aims to set up the basic framework we need to develop Synchronizo. A lot of this will involve having our more experienced team members teach and guide the others in the basics of web development and getting a good development work-flow set up. This will also include setting up the architecture to host the Synchronizo website, making a very basic front-end and setting up the boilerplate node.js code for the web app. It will also include our first attempt to allow for music uploads on the website.
+
+\begin{description}
+\item[Scrum Master] Abhijeet Chakrabarti
+
+\item[Meeting Plan] Meeting on Fridays and Saturdays in Hillenbrand
+
+\item[Risks And Challenges] Some of the members of our team are not yet familiar with web development practices or skilled in the languages required to create our web-app. For our team, a large part of Sprint 1 will be attempting to bring all of the members of our team up to speed with the technical skills required to complete this project.
+\end{description}
+
+\chapter{Current Sprint Details}
+
+\Centered{
+    \section{User Story \#2}
+}
+
+As a user, I want to be able to upload my own music.
+
+\vspace{3mm}
+
+\def\arraystretch{1.6}%  1 is the default, change whatever you need 
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a basic upload page       & 3 hrs & Front-End & Eric \\
+     2  & Make back-end handle file uploads & 3 hrs & Back-End  & Eric \\
+     3  & Configure uploading to handle different file types & 5 hrs & Back-End & Eric \\
+     4  & Make back-end and front-end report upload progress & 4 hrs & Back-End and Front-End & Ammar \\
+     5  & Transcode file uploads to a unified format & 2 hrs & Back-End & Eric
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} uploads have been implemented, \textit{when} I go to the Synchronizo webapp, \textit{then} I should see some sort of interface
+    that allows me to upload my own files.
+    
+    \item \textit{Given} that there is an interface that allows me to upload files, \textit{when} it is used to upload a file, \textit{then} there should be some sort of indicator of the progress of the upload.
+    
+    \item \textit{Given} that a file is upload successfully, \textit{when} the upload is finished, \textit{then} it should be converted into a single format such as mp3 so that it may be used universally.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#18}
+}
+
+As a user, I want to be able to see information about the album for playing tracks.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create an optional text section for album info & 2 hrs & Front-End & Abhijeet\\
+     2  & Make back-end communicate with last.fm's API & 3 hrs & Back-End  & Ammar \\
+     3  & Obtain album info from API and display it & 3 hrs & Back-End and Front-End & Ammar \\
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} an uploaded music file, \textit{when} it is done uploading, \textit{then} information about its album should be retrieved from the last.fm API.
+    
+    \item \textit{Given} an uploaded music file, \textit{when} it is displayed on the webapp, \textit{then} information about the album of the song should be displayed.
+    
+    \item \textit{Given} an uploaded music file, \textit{when} information about it cannot be retrieved, \textit{then} an indicator of a failure to retrieve the metadata should be shown.
+\end{itemize}
+
+\pagebreak
+
+\Centered{
+    \section{User Story \#19}
+}
+
+As a user, I want to be able to see information about the artist for playing tracks.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create an optional text section for artist info & 2 hrs & Front-End & Abhijeet \\
+     2  & Obtain artist info from last.fm API and display it & 2 hrs & Front-end and Back-End  & Brian \\
+    
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} an uploaded music file, \textit{when} it is done uploading, \textit{then} information about its artist should be retrieved from the last.fm API.
+    
+    \item \textit{Given} an uploaded music file, \textit{when} it is displayed on the webapp, \textit{then} artist information should be visible.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#3}
+}
+
+As a user, I want to be able to create an account.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a basic sign up page & 3 hrs & Front-End & Abhijeet \\
+     2  & Set up database to handle creation of users & 6 hrs & Back-End  & Ammar \\
+     3  & Create a record for the user in the database when they register & 4 hrs & Back-End & Ammar
+    
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user goes to the webapp, \textit{when} they hit the sign-up button, \textit{then} they should be brought to a page where they can enter their registration details and sign up for the site.
+    
+    \item \textit{Given} a user signs up, \textit{when} they finish the sign up process, \textit{then} a record representing them should be added to the database.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#4}
+}
+
+As a user, I want to be able to log in to my account.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a basic login page & 5 hrs & Front-End & Brian \\
+     2  & Handle authentication and session creation on the back-end & 3 hrs & Back-End & Brian\\
+     3  & Make session handling code to handle timeouts & 2 hrs & Back-End & Brian
+    
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a signed up user, \textit{when} they go to login, \textit{then} they should be able to enter their
+    login details and be able to login.
+    
+    \item \textit{Given} a logged in user, \textit{when} they go to the webapp, \textit{then} there should be some indication that they are logged in.
+    
+    \item \textit{Given} a logged in user, \textit{when} they have been inactive for a certain period of time, \textit{then} their session should expire and they should be logged out automatically.
+    
+\end{itemize}
+
+
+\chapter{Remaining Backlog}
+    
+    \begin{enumerate}
+
+    \item As a user, I want to be able to listen to music simultaneously with other people.
+    
+    \item As a user, I want to to be able to upload my own music.
+        
+    \item As a user, I want to be able to create an account.
+    
+    \item As a user, I want to be able to log in to my account.
+
+    \item As a user, I want to be able to have people follow my account.
+
+    \item As a user, I want to be able to follow other users.
+    
+    \item As a user, I want to be able to un-follow other users.
+    
+    \item As a user, I want to be able to party chat with other users in the same listening party.
+    
+    \item As a user, I want to be able to direct message other users.
+    
+    \item As a user, I want to be able to invite other users to join my listening party.
+    
+    \item As a user, I want to be able to permanently leave certain listening parties.
+    
+    \item As a user, I want my followers to be able to see the recent music I have listened to.
+    
+    \item As a user, I want the ability to block other users. 
+    
+    \item As a user, I want the ability to report other users for misconduct.
+    
+    \item As a user, I want to have a profile (picture, bio, favorite music, etc.)
+    
+    \item As a user, I want to be able to set privacy settings for my account.
+    
+    \item As a user, I want to be able to create multiple listening parties.
+    
+    \item As a user, I want to be able to see information about the album for playing tracks.
+    
+    \item As a user, I want to be able to see information about the artist for playing tracks.
+
+    \item As a user, I want to be able to control the playback of the music for everyone.
+    
+    \item As a user, I want to be able to view listener metrics and statistics.
+    
+    \item As an admin, I want to be able to control user accounts.
+    
+    \item As an admin, I want to be able to monitor usage of the service.
+    
+    \item As an advertiser, I want to be able to see data on people's taste in music so I can target ads to them.
+
+\end{enumerate}
+
+\end{document}
