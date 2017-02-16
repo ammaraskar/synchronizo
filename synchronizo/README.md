@@ -16,3 +16,8 @@ Here lives the source code for the Synchronizo webapp.
 
 1. Change into this directory
 2. `npm test`
+
+## Testing (with Coverage Details)
+
+1. Change into this directory
+2. `npm run-script test-coverage`
