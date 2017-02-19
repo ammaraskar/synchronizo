@@ -13,4 +13,8 @@ var server     =    app.listen(8080 ,function(){
     console.log("We have started our server on port 8080");
 });
 
+if (false) {
+    console.log("This will never run");
+}
+
 module.exports = server;
