@@ -57,7 +57,9 @@ router.get('/:roomName', function (req, res) {
         res.send("Room not found");
         return;
     }
-    res.send("Welcome to " + name);
+
+    var room = app.locals.rooms[name];
+    res.render('public/room.html', {room: room});
 })
 
 module.exports = router;

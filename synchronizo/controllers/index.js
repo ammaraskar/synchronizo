@@ -1,10 +1,17 @@
 var express = require('express');
 var router = express.Router();
+var app = require('../server').app;
 
 router.use('/room', require('./music_room'))
 
 router.get('/', function(req, res) {
-    res.render('public/index.html');
+    var rooms = [];
+
+    for (var room in app.locals.rooms) {
+        rooms.push(app.locals.rooms[room]);
+    }
+
+    res.render('public/index.html', {rooms: rooms});
 });
 
 module.exports = router;
