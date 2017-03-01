@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "mocha spec/",
-    "test-coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec spec/*"
+    "test": "mocha tests/",
+    "test-coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec tests/*"
   },
   "repository": {
     "type": "git",
