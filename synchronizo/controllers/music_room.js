@@ -28,17 +28,34 @@ function getUniqueRoomName() {
 
         // We've more than likely ran out of random names that can
         // be created, not much we can do here, so toss an exception
-        if (count > 50) {
-            throw Error('Ran out of random room names to generate');
+        if (count > (prefixes.length * suffixes.length * 2)) {
+            throw {name : "OutOfNamesError", message : "Ran out of random rooms names"};
         }
     }
 
     return name;
 }
 
-router.get('/create', function(req, res) {
+function createNewRoom() {
+    var name = getUniqueRoomName();
+    var room = new MusicRoom(name);
+    rooms[name] = room;
 
+    return room;
+}
+
+router.get('/create', function(req, res) {
+    try {
+        var room = createNewRoom();
+    } catch (err) {
+        if (err.name === "OutOfNamesError") {
+            // do something nice
+        } else {
+            // not our problem lol
+            throw err;
+        }
+    }
 });
 
 module.exports = router;
-module.exports.getUniqueRoomName = getUniqueRoomName;
+module.exports.createNewRoom = createNewRoom;
