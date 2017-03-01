@@ -10,11 +10,10 @@ nunjucks.configure('views', {
     express: app
 });
 
+// Serve static files from express for now
 app.use(express.static('public'));
-
-app.get('/',function(req, res){
-    res.render('public/index.html');
-});
+// Hook up all the actual routes to the main app
+app.use(require('./controllers'));
 
 var server = app.listen(8080 ,function(){
     console.log("We have started our server on port 8080");
