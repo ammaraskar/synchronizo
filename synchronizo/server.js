@@ -1,8 +1,16 @@
-var express    =    require('express');
-var app        =    express();
+var express = require('express');
+var nunjucks = require('nunjucks');
 
-app.get('/',function(req,res){
-    res.send('Hello world');
+var app = express();
+
+nunjucks.configure('views', {
+    autoescape: true,
+    throwOnUndefined: true,
+    express: app
+});
+
+app.get('/',function(req, res){
+    res.render('index.html');
 });
 
 var server     =    app.listen(8080 ,function(){
