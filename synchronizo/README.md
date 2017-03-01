@@ -14,6 +14,9 @@ main routing code can be found under `/controllers/index.js`
 `/views` has all the templates used to render Synchronizo pages, this is further
 split into folders depending on which routes use the templates.
 
+`/models` contains classes that model database layer storage classes in
+addition to just implementing general functionality.
+
 ## How To Run
 
 1. Change into this directory
