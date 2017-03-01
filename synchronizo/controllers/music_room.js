@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
-var rooms = {};
+var app = require('../server').app;
 
 // Class declaration for a MusicRoom
 function MusicRoom(name) {
@@ -18,7 +17,7 @@ function generateRandomRoomName() {
     return prefix + suffix;
 }
 
-function getUniqueRoomName() {
+function getUniqueRoomName(rooms) {
     var count = 0;
     var name = generateRandomRoomName();
     // ensure this name is not in use
@@ -36,8 +35,8 @@ function getUniqueRoomName() {
     return name;
 }
 
-function createNewRoom() {
-    var name = getUniqueRoomName();
+function createNewRoom(rooms) {
+    var name = getUniqueRoomName(rooms);
     var room = new MusicRoom(name);
     rooms[name] = room;
 
@@ -45,17 +44,21 @@ function createNewRoom() {
 }
 
 router.get('/create', function(req, res) {
-    try {
-        var room = createNewRoom();
-    } catch (err) {
-        if (err.name === "OutOfNamesError") {
-            // do something nice
-        } else {
-            // not our problem lol
-            throw err;
-        }
-    }
+    var room = createNewRoom(app.locals.rooms);
+
+    res.redirect(room.name);
 });
+
+router.get('/:roomName', function (req, res) {
+    var name = req.params.roomName;
+
+    if (!(name in app.locals.rooms)) {
+        res.status(404);
+        res.send("Room not found");
+        return;
+    }
+    res.send("Welcome to " + name);
+})
 
 module.exports = router;
 module.exports.createNewRoom = createNewRoom;

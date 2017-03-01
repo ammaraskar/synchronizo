@@ -2,6 +2,10 @@ var express = require('express');
 var nunjucks = require('nunjucks');
 
 var app = express();
+module.exports.app = app;
+
+// Initialize the rooms to be empty
+app.locals.rooms = {};
 
 nunjucks.configure('views', {
     autoescape: true,
