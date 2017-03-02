@@ -28,6 +28,8 @@ module.exports = config;
 `/controllers` handles routing requests to the appropriate locations. All the
 main routing code can be found under `/controllers/index.js`
 
+`/helpers` contain helper modules used all throughout the project.
+
 `/views` has all the templates used to render Synchronizo pages, this is further
 split into folders depending on which routes use the templates.
 

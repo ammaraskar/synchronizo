@@ -73,8 +73,6 @@ function onUserRoomJoin(room, user) {
     }
     // inform others of this user's joining
     io.to(room.name).emit('newUserJoin', user.summarize());
-
-    console.log('New users list: ', room.users);
 }
 
 function onUserRoomQuit(room, user) {

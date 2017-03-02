@@ -1,6 +1,7 @@
 // Client side javascript to handle a music room
 var socket = io();
 var users = {};
+var songs = {};
 
 socket.on('connect', function(data) {
     socket.emit('join', {'room': ROOM_NAME});
@@ -23,6 +24,8 @@ socket.on('userQuit', function(data) {
 socket.on('songUpdate', function(data) {
     console.log('songUpdate');
     console.log(data);
+
+    onSongUpdate(data);
 });
 
 function onNewUserJoin(user) {
@@ -62,6 +65,50 @@ User.prototype.renderUserBox = function () {
     html.find('.user-name').text(this.username);
     return html;
 };
+
+function onSongUpdate(song) {
+    if (song.id in songs) {
+
+    } else {
+        var song = new Song(song);
+
+        var rendered = song.renderSongBox();
+        song.setRenderedBox(rendered);
+
+        $("#song-container").append(rendered);
+
+        songs[song.id] = song;
+    }
+}
+
+function Song(song_json) {
+    this.id = song_json.id;
+
+    this.album = song_json.album;
+    this.artist = song_json.artist;
+    this.title = song_json.title;
+
+    this.albumArt = song_json.album_art;
+
+    this.rendered = $("");
+};
+
+Song.prototype.setRenderedBox = function(rendered) {
+    this.rendered = rendered;
+}
+
+Song.prototype.renderSongBox = function() {
+    var html = $("#songDisplayTemplate").html();
+    html = html.replace("{album-art}", this.albumArt);
+    html = $(html);
+
+    html.find('.artist').attr('title', this.artist);
+    html.find('.artist a').text(this.artist);
+    html.find('.album').text(this.album).attr('title', this.album);
+    html.find('.title').text(this.title).attr('title', this.title);
+
+    return html;
+}
 
 if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
   alert('The File APIs are not fully supported in this browser.');

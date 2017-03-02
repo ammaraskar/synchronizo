@@ -42,7 +42,7 @@ $( document ).ready(function() {
             </div>
         </div>
         <figcaption>
-            <span title="{artist}" class="artist">
+            <span class="artist">
                 <a href="#">{artist}</a>
             </span>
             <span class="album" title="{album}">{album}</span>
@@ -128,7 +128,7 @@ $( document ).ready(function() {
             <div class="col-md-8">
                 <div class="panel panel-primary">
                     <div class="panel-heading">What's queued?</div>
-                    <div class="panel-body">
+                    <div id="song-container" class="panel-body">
                         <div data-song-id="1" id="song-1" class="song">
                             <img width="220" height="220" src="https://lastfm-img2.akamaized.net/i/u/300x300/9a68a84e53d74c59cc679892d63c32bd.png" class="img-rounded" data-toggle="tooltip" data-placement="left" data-original-title="Uploaded by ammar">
                             <div class="progress progress-striped active">
