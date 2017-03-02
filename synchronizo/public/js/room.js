@@ -81,17 +81,49 @@ function onSongUpdate(song) {
     }
 }
 
+socket.on('songUploadProgress', function(data) {
+    if (!(data.id in songs)) {
+        return;
+    }
+
+    var song = songs[data.id];
+    song.setProgress(song.rendered, data.progress);
+});
+
+socket.on('songUploaded', function(data) {
+    if (!(data.id in songs)) {
+        return;
+    }
+
+    var song = songs[data.id];
+    song.markUploaded(song.rendered);
+});
+
 function Song(song_json) {
     this.id = song_json.id;
 
     this.album = song_json.album;
     this.artist = song_json.artist;
     this.title = song_json.title;
-
     this.albumArt = song_json.album_art;
+
+    this.uploading = song_json.uploading;
+    this.uploadProgress = song_json.uploadProgress;
 
     this.rendered = $("");
 };
+
+Song.prototype.setProgress = function(html, progress) {
+    this.uploadProgress = progress;
+
+    html.find('.progress-bar').css('width', this.uploadProgress + '%');
+    html.addClass('uploading');
+}
+
+Song.prototype.markUploaded = function(html) {
+    html.find('.progress').hide();
+    html.removeClass('uploading');
+}
 
 Song.prototype.setRenderedBox = function(rendered) {
     this.rendered = rendered;
@@ -106,6 +138,12 @@ Song.prototype.renderSongBox = function() {
     html.find('.artist a').text(this.artist);
     html.find('.album').text(this.album).attr('title', this.album);
     html.find('.title').text(this.title).attr('title', this.title);
+
+    if (this.uploading) {
+        this.setProgress(html, this.uploadProgress);
+    } else {
+        this.markUploaded(html);
+    }
 
     return html;
 }

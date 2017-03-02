@@ -48,7 +48,7 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
     var song = room.findUploadingSong(filename);
     if (song) {
         song.markUploaded();
-        emitSongUpdate(room, song);
+        emitSongUploaded(room, song);
         res.status(204).end();
     } else {
         res.status(500).end();
@@ -57,6 +57,14 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
 
 function emitSongUpdate(room, song) {
     io.to(room.name).emit('songUpdate', song.summarize());
+}
+
+function emitSongUploaded(room, song) {
+    io.to(room.name).emit('songUploaded', {id: song.id});
+}
+
+function emitSongUploadProgress(room, song) {
+    io.to(room.name).emit('songUploadProgress', {id: song.id, progress: song.uploadProgress});
 }
 
 function onUserRoomJoin(room, user) {
@@ -113,7 +121,7 @@ io.on('connection', function(socket) {
         var song = joinedRoom.findUploadingSongByUploader(socket);
         if (song) {
             song.setProgress(data);
-            emitSongUpdate(joinedRoom, song);
+            emitSongUploadProgress(joinedRoom, song);
         }
     });
 
