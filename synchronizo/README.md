@@ -2,6 +2,23 @@
 
 Here lives the source code for the Synchronizo webapp.
 
+## Configuration
+
+`config.js` is the configuration file for the project.  It is part of .gitignore
+to avoid accidentally committing secrets etc to version control. An example
+of a config file is like this:
+
+```js
+var config = {};
+
+config.lastfm = {};
+config.lastfm.api_key = "asdf";
+config.lastfm.secret = "asdf";
+
+module.exports = config;
+```
+
+
 ## Directory Structure
 
 `/tests` contains unit tests
@@ -10,6 +27,8 @@ Here lives the source code for the Synchronizo webapp.
 
 `/controllers` handles routing requests to the appropriate locations. All the
 main routing code can be found under `/controllers/index.js`
+
+`/helpers` contain helper modules used all throughout the project.
 
 `/views` has all the templates used to render Synchronizo pages, this is further
 split into folders depending on which routes use the templates.

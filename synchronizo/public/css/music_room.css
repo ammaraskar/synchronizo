@@ -34,3 +34,54 @@
     position: relative;
     font-size: 17px;
 }
+
+.song {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 3px;
+}
+
+.song .artist {
+    font-weight: bold;
+}
+
+.song .album {
+    font-style: italic;
+}
+
+figcaption > span {
+    display: block;
+    width: 220px;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 20px; /* Essentially serves as line height here */
+    text-overflow: ellipsis;
+}
+
+figcaption .ellipsis {
+    color: white;
+}
+
+.song.active > img {
+    border: solid #2d4968;
+}
+
+.song.uploading > img {
+    height: 215px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    opacity: 0.4;
+}
+
+.song > .progress {
+    height: 5px;
+    margin-bottom: 0
+}
+
+.song.uploading > figcaption {
+    opacity: 0.6;
+}
+
+.song.active {
+    color: #e1e1e1;
+}
