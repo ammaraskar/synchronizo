@@ -1101,12 +1101,12 @@ textarea {
   line-height: inherit;
 }
 a {
-  color: #537697;
+  color: #5d86b2;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #537697;
+  color: #65a3dd;
   text-decoration: underline;
 }
 a:focus {

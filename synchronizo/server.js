@@ -16,11 +16,15 @@ nunjucks.configure('views', {
 
 // Serve static files from express for now
 app.use(express.static('public'));
-// Hook up all the actual routes to the main app
-app.use(require('./controllers'));
 
 var server = app.listen(8080, function(){
     console.log("We have started our server on port 8080");
 });
 
+io = require('socket.io')(server);
+
+// Hook up all the actual routes to the main app
+app.use(require('./controllers'));
+
 module.exports = server;
+module.exports.io = io;

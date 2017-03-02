@@ -8,6 +8,7 @@ var path = require('path');
 
 router.use('/room', require('./music_room'))
 
+
 router.get('/', function(req, res) {
     var rooms = [];
 
@@ -20,7 +21,7 @@ router.get('/', function(req, res) {
 
 router.get('/upload', function(req, res) {
     res.render('public/upload.html');
-})
+});
 
 app.post('/upload_endpoint', function(req, res){
 
@@ -52,6 +53,9 @@ app.post('/upload_endpoint', function(req, res){
 
     // parse the incoming request containing the form data
     form.parse(req);
+});
+router.get('/login', function(req,res) {
+    res.render('public/login.html');
 });
 
 module.exports = router;
