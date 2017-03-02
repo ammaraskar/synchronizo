@@ -2,6 +2,23 @@
 
 Here lives the source code for the Synchronizo webapp.
 
+## Configuration
+
+`config.js` is the configuration file for the project.  It is part of .gitignore
+to avoid accidentally committing secrets etc to version control. An example
+of a config file is like this:
+
+```js
+var config = {};
+
+config.lastfm = {};
+config.lastfm.api_key = "asdf";
+config.lastfm.secret = "asdf";
+
+module.exports = config;
+```
+
+
 ## Directory Structure
 
 `/tests` contains unit tests
