@@ -14,9 +14,13 @@ $('#upload-input').on('change', function(){
         var formData = new FormData();
         // loop through all the selected files and add them to the formData object
         for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            // add the files to formData object for the data payload
-            formData.append('uploads[]', file, file.name);
+            var extn = files[i].name.split(".").pop();
+            if (extn == 'wav' | extn == 'mp3') { // Limit file types
+                // TODO: Verify this doesn't cause problems
+                var file = files[i];
+                // add the files to formData object for the data payload
+                formData.append('uploads[]', file, file.name);
+            }
         }
     $.ajax({
         url: '/upload_endpoint',
