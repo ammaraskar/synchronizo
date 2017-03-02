@@ -5139,9 +5139,9 @@ a.thumbnail.active {
 .progress-bar {
   float: left;
   width: 0%;
-  height: 100%;
+  height: 200%;
   font-size: 13px;
-  line-height: 21px;
+  line-height: 400px;
   color: #ffffff;
   text-align: center;
   background-color: #375a7f;
