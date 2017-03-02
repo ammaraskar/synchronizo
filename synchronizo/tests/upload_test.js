@@ -1,7 +1,6 @@
 var request = require('supertest');
 var should = require('should');
 var formidable = require('formidable');
-var jQuery = require('jquery');
 
 describe('loading upload', function () {
     var server;
