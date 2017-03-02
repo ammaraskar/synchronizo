@@ -6,6 +6,7 @@ var ID3 = require('id3-parser');
 var multer = require('multer');
 var upload = multer({ dest: 'tmp/' });
 
+var User = require('../models/User');
 var MusicRoom = require('../models/MusicRoom');
 var Song = MusicRoom.Song;
 var createNewRoom = MusicRoom.createNewRoom;
@@ -59,11 +60,32 @@ function emitSongUpdate(room, song) {
 }
 
 function onUserRoomJoin(room, user) {
-    io.to(room.name).emit('newUserJoin', {'username': user.username});
+    room.addUser(user);
+    user.socket.join(room.name);
+
+    // propogate currently joined users to this room
+    for (var i = 0; i < room.users.length; i++) {
+        user.socket.emit('newUserJoin', room.users[i].summarize());
+    }
+    // propogate currently added songs
+    for (var i = 0; i < room.songs.length; i++) {
+        user.socket.emit('songUpdate', room.songs[i].summarize());
+    }
+    // inform others of this user's joining
+    io.to(room.name).emit('newUserJoin', user.summarize());
+
+    console.log('New users list: ', room.users);
+}
+
+function onUserRoomQuit(room, user) {
+    room.removeUser(user);
+
+    io.to(room.name).emit('userQuit', user.summarize());
 }
 
 io.on('connection', function(socket) {
     var joinedRoom;
+    var user;
 
     socket.on('join', function(data) {
         var roomName = data.room;
@@ -78,8 +100,9 @@ io.on('connection', function(socket) {
 
         console.log("user joining " + room.name);
 
-        socket.join(room.name);
-        onUserRoomJoin(room, {'username': 'Anonymous'});
+        user = new User('Anonymous', socket);
+
+        onUserRoomJoin(room, user);
     });
 
     socket.on('uploadProgress', function(data) {
@@ -125,8 +148,10 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function (data) {
         console.log('user disconnected');
 
-        if (joinedRoom) {
+        if (joinedRoom && user) {
             console.log('user leaving room ' + joinedRoom.name);
+
+            onUserRoomQuit(joinedRoom, user);
         }
     });
 });

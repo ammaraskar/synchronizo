@@ -1,36 +1,59 @@
 // Client side javascript to handle a music room
 var socket = io();
-var users = [];
+var users = {};
 
 socket.on('connect', function(data) {
     socket.emit('join', {'room': ROOM_NAME});
 });
 
 socket.on('newUserJoin', function(data) {
-    onNewUserJoin(data.username);
+    console.log('newUserJoin');
+    console.log(data);
+
+    onNewUserJoin(data);
+});
+
+socket.on('userQuit', function(data) {
+    console.log('userQuit');
+    console.log(data);
+
+    onUserQuit(data);
 });
 
 socket.on('songUpdate', function(data) {
+    console.log('songUpdate');
     console.log(data);
 });
 
-function onNewUserJoin(username) {
-    var user = new User(username);
-    users.push(user);
+function onNewUserJoin(user) {
+    var user = new User(user.id, user.username);
 
-    $("#user-list").append(user.renderUserBox());
+    if (user.id in users) {
+        // update the exixting user
+    } else {
+        users[user.id] = user;
+        var renderedBox = user.renderUserBox();
+        $("#user-list").append(renderedBox);
+        user.setRenderedBox(renderedBox);
+    }
 }
 
-function onUserQuit(username) {
-    var index = array.indexOf(username);
-
-    var user = users[index];
-    users.splice(index, 1);
+function onUserQuit(user) {
+    var user = users[user.id];
+    user.renderedBox.remove();
+    delete users[user.id];
 }
 
-function User(username) {
+function User(id, username) {
+    this.id = id;
     this.username = username;
+
+    this.renderedBox = $("");
 }
+
+User.prototype.setRenderedBox = function(renderedBox) {
+    this.renderedBox = renderedBox;
+};
 
 User.prototype.renderUserBox = function () {
     var html = $($("#userDisplayTemplate").html());
