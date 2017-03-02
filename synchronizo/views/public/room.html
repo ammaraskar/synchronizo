@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block bodyend %}
+<script>
+var ROOM_NAME = "{{ room.name }}";
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script src="/js/room.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.3.2/wavesurfer.min.js"></script>
 
 <script>
@@ -19,6 +25,16 @@ $( document ).ready(function() {
 {% endblock %}
 
 {% block content %}
+<!-- Psuedo multi line strings, this is horrible -->
+<script id='userDisplayTemplate' language="text">
+    <div class="whos-here-box hovereffect">
+        <img class="img-responsive user-avatar" src="http://placehold.it/150x150" alt="">
+        <div class="overlay">
+           <h2 class="user-name">Anonymous</h2>
+        </div>
+    </div>
+</script>
+
     <div class="container-fluid">
         <div class="page-header text-center">
             <h1><small>Currently listening in the </small> {{ room.name }} <small>room</small></h1>
@@ -47,25 +63,7 @@ $( document ).ready(function() {
                 <div class="panel panel-default">
                     <div class="panel-heading">Who's here?</div>
                     <div class="panel-body">
-                        <div class="images" style="display: inline;">
-                            <div class="hovereffect">
-                                <img class="img-responsive" src="http://placehold.it/150x150" alt="">
-                                <div class="overlay">
-                                   <h2>Anonymous</h2>
-                                </div>
-                            </div>
-                            <div class="hovereffect">
-                                <img class="img-responsive" src="http://placehold.it/150x150" alt="">
-                                <div class="overlay">
-                                   <h2>Anonymous</h2>
-                                </div>
-                            </div>
-                            <div class="hovereffect">
-                                <img class="img-responsive" src="http://placehold.it/150x150" alt="">
-                                <div class="overlay">
-                                   <h2>Anonymous</h2>
-                                </div>
-                            </div>
+                        <div id="user-list" class="images" style="display: inline;">
                         </div>
                     </div>
                 </div>
