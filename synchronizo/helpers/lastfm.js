@@ -46,6 +46,26 @@ function pickLargestImage(images) {
     return "404.png";
 }
 
+function getAlbumInfo(song, callback) {
+    var params = {
+        artist: song.artist,
+        album: song.album,
+        autocorrect: 1
+    }
+
+    lfm.album.getInfo(params, function(err, res) {
+        if (err) {
+            console.error(err);
+            callback();
+            return;
+        }
+
+        song.album = res.name;
+        song.album_art = pickLargestImage(res.image);
+        callback();
+    });
+}
+
 function updateSongFromLastFM(_song, callback) {
     // if we don't have access to the lastfm api then we can't do much
     if (!lfm) {
@@ -58,6 +78,12 @@ function updateSongFromLastFM(_song, callback) {
     if (!_song.artist && !_song.title) {
         console.log("No artist and title info");
         callback();
+        return;
+    }
+
+    // if we have album information, prefer to retrieve album art from there
+    if (_song.album) {
+        getAlbumInfo(_song, callback);
         return;
     }
 

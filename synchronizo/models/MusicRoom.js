@@ -108,9 +108,10 @@ Song.prototype.setProgress = function(progress) {
     this.uploadProgress = progress;
 }
 
-Song.prototype.markUploaded = function() {
-    this.uploadProgress = 100;
+Song.prototype.setUploadedFile = function(uploadedFile) {
+    this.uploadedFile = uploadedFile;
     this.uploading = false;
+    this.uploadProgress = 100;
 }
 
 Song.prototype.summarize = function() {

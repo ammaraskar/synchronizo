@@ -44,10 +44,11 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
 
     var room = app.locals.rooms[name];
     var filename = req.file.originalname;
+    var saved_file = req.file.path;
 
     var song = room.findUploadingSong(filename);
     if (song) {
-        song.markUploaded();
+        song.setUploadedFile(saved_file);
         emitSongUploaded(room, song);
         res.status(204).end();
     } else {
