@@ -33,6 +33,7 @@ if (config) {
     passport.use(new Strategy({
             clientID: config.facebook.app_id,
             clientSecret: config.facebook.secret,
+            callbackURL: config.facebook.callbackURL
             callbackURL: 'http://localhost:8080/auth/facebook/callback'
         },
         function(accessToken, refreshToken, profile, cb) {
@@ -71,8 +72,8 @@ app.use(function(req, res, next){
 // Serve static files from express for now
 app.use(express.static('public'));
 
-var server = app.listen(8080, function(){
-    console.log("We have started our server on port 8080");
+var server = app.listen(8000, function(){
+    console.log("We have started our server on port 8000");
 });
 
 io = require('socket.io')(server);
