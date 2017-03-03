@@ -34,6 +34,10 @@ MusicRoom.prototype.onSongUpload = function(song) {
 }
 
 MusicRoom.prototype.changeSong = function(id) {
+    if (id < 0 || id >= this.songs.length) {
+        throw new Error("changing song to invalid index");
+    }
+
     this.currentlyPlayingSong = id;
     this.currentSongTimestamp = 0;
 

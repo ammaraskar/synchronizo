@@ -103,6 +103,10 @@ User.prototype.renderUserBox = function () {
     return html;
 };
 
+function changeSong(id) {
+    socket.emit('clientChangeSong', id);
+}
+
 function onSongChange(id) {
     var song = songs[id];
 
@@ -180,15 +184,20 @@ Song.prototype.renderSongBox = function() {
     html = html.replace("{album-art}", this.albumArt);
     html = $(html);
 
-    var artist = this.artist;
+    var _this = this;
 
     html.find('.artist').attr('title', this.artist);
     html.find('.artist a').text(this.artist).click(function(event) {
         event.preventDefault();
-        retrieveArtistInfo(artist);
+        retrieveArtistInfo(_this.artist);
     });
     html.find('.album').text(this.album).attr('title', this.album);
     html.find('.title').text(this.title).attr('title', this.title);
+
+    html.find('.album-art-link').click(function(event) {
+        event.preventDefault();
+        changeSong(_this.id);
+    });
 
     if (this.uploading) {
         this.setProgress(html, this.uploadProgress);

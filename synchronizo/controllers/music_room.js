@@ -154,6 +154,14 @@ io.on('connection', function(socket) {
         onUserRoomJoin(room, user);
     });
 
+    socket.on('clientChangeSong', function(id) {
+        if (!joinedRoom) {
+            return;
+        }
+
+        joinedRoom.changeSong(id);
+    });
+
     socket.on('uploadProgress', function(data) {
         if (!joinedRoom) {
             return;

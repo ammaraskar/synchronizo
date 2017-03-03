@@ -62,11 +62,11 @@ figcaption .ellipsis {
     color: white;
 }
 
-.song.active > img {
+.song.active img {
     border: solid #2d4968;
 }
 
-.song.uploading > img {
+.song.uploading img {
     height: 215px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
