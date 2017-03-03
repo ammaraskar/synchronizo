@@ -114,6 +114,7 @@ function onSongChange(id) {
     song.rendered.addClass("active");
 
     wavesurfer.load(ROOM_NAME + '/song/' + id);
+    retrieveArtistInfo(song.artist);
 }
 
 function onSongUpdate(song) {
