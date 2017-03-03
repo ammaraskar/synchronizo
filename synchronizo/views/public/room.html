@@ -98,19 +98,22 @@ $( document ).ready(function() {
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        What's playing?
-                        <span class="pull-right" style="font-weight:bold">My Bloody Valentine</span>
+                        Artist Info
+                        <span id="artist-info-name" class="pull-right" style="font-weight:bold">
+                            My Bloody Valentine
+                        </span>
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body">
                         <div class="container-fluid">
+                            <div style="display: none" id="artist-loader" class="loader">Loading...</div>
                             <div class="row">
                                 <div class="col-md-offset-1 col-md-10">
-                                    <img src="https://lastfm-img2.akamaized.net/i/u/770x0/04571c1dc99c449057c71a58ec34db16.jpg" class="img-circle img-responsive">
+                                    <img id="artist-image" src="https://lastfm-img2.akamaized.net/i/u/770x0/04571c1dc99c449057c71a58ec34db16.jpg" class="img-circle img-responsive">
                                 </div>
                             </div>
                             <div style="margin-top:20px" class="row">
-                                <div class="col-md-12">
+                                <div id="artist-bio" class="col-md-12">
                                     <p>My Bloody Valentine is a shoegaze band formed in late 1983 in Dublin, Ireland. The band’s best known lineup is Kevin Shields (vocals, guitar), Bilinda Butcher
                                         (vocals, guitar), Debbie Googe (bass) and Colm Ó Cíosóig (drums). Their 1988 album Isn't Anything is generally regarded as one of the most influential records
                                         of the period, acting as an important precursor to the early '90s "shoegazing" scene. </p>

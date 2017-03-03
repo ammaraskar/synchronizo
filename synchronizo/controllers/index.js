@@ -3,6 +3,7 @@ var router = express.Router();
 var app = require('../server').app;
 
 router.use('/room', require('./music_room'))
+router.use('/api', require('./api'))
 
 
 router.get('/', function(req, res) {

@@ -11,6 +11,41 @@ try {
     var lfm;
 }
 
+
+/* An example of the structure last.fm returns for images
+[ { '#text': 'https://lastfm-img2.akamaized.net/i/u/34s/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: 'small' },
+  { '#text': 'https://lastfm-img2.akamaized.net/i/u/64s/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: 'medium' },
+  { '#text': 'https://lastfm-img2.akamaized.net/i/u/174s/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: 'large' },
+  { '#text': 'https://lastfm-img2.akamaized.net/i/u/300x300/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: 'extralarge' },
+  { '#text': 'https://lastfm-img2.akamaized.net/i/u/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: 'mega' },
+  { '#text': 'https://lastfm-img2.akamaized.net/i/u/arQ/67008dbfc8b0f6f44f601f26a19e6d07.png',
+    size: '' } ]
+*/
+var order = ["mega", "extralarge", "large", "medium", "small"];
+function pickLargestImage(images) {
+    var images_per_size = {};
+
+    for (var i = 0; i < images.length; i++) {
+        var size = images[i].size;
+        images_per_size[size] = images[i]["#text"];
+    }
+
+    // now that we have them ordered per size, pick out the best one we can
+    for (var i = 0; i < order.length; i++) {
+        if (order[i] in images_per_size) {
+            return images_per_size[order[i]];
+        }
+    }
+
+    // no images?
+    return "404.png";
+}
+
 function updateSongFromLastFM(_song, callback) {
     // if we don't have access to the lastfm api then we can't do much
     if (!lfm) {
@@ -66,30 +101,44 @@ function updateSongFromLastFM(_song, callback) {
         }
 
         if (track.image) {
-            var album_art_found = false;
-
-            // First try to find an extralarge image
-            for (var i = 0; i < track.image.length; i++) {
-                var image = track.image[i];
-                if (image.size === 'extralarge') {
-                    album_art_found = true;
-                    _song.album_art = image["#text"];
-                    break;
-                }
-            }
-
-            // if not, anything will do
-            if (!album_art_found) {
-                for (var i = 0; i < track.image.length; i++) {
-                    var image = track.image[i];
-                    _song.album_art = image["#text"];
-                    break;
-                }
-            }
+            _song.album_art = pickLargestImage(track.image);
         }
 
         callback();
     });
 }
 
+var artist_info_cache = {};
+
+function getAristInfo(artist, callback) {
+    if (artist in artist_info_cache) {
+        callback(null, artist_info_cache[artist]);
+        return;
+    }
+
+    lfm.artist.getInfo({artist: artist, autocorrect: 1}, function(err, res) {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+
+        var corrected_artist = res.name;
+        var bio = res.bio.summary || "";
+        var image = pickLargestImage(res.image);
+
+        var response = {
+            error: false,
+            artist: corrected_artist,
+            bio: bio,
+            image: image
+        };
+
+        artist_info_cache[artist] = response;
+        artist_info_cache[corrected_artist] = response;
+
+        callback(null, response);
+    });
+}
+
 module.exports.updateSongFromLastFM = updateSongFromLastFM;
+module.exports.getAristInfo = getAristInfo;

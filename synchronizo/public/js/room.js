@@ -28,6 +28,37 @@ socket.on('songUpdate', function(data) {
     onSongUpdate(data);
 });
 
+var RETRIEVING_ALREADY = false;
+function retrieveArtistInfo(artist) {
+    if (RETRIEVING_ALREADY) {
+        return;
+    }
+
+    RETRIEVING_ALREADY = true;
+
+    $("#artist-bio").fadeOut(function() {
+        $("#artist-loader").fadeIn(function() {
+            $.get("/api/artist_info.json", { artist: artist},
+            function(data) {
+                if (data.error) {
+                    $("#artist-info-name").text(artist);
+                    $("#artist-bio").text("Failed to retrieve information");
+                    return;
+                }
+
+                $("#artist-bio").html(data.bio);
+                $("#artist-info-name").text(data.artist);
+                $("#artist-image").attr("src", data.image);
+            }, "json").always(function() {
+                $("#artist-loader").fadeOut(function() {
+                    $("#artist-bio").fadeIn();
+                });
+                RETRIEVING_ALREADY = false;
+            });
+        });
+    });
+}
+
 function onNewUserJoin(user) {
     var user = new User(user.id, user.username);
 
@@ -134,8 +165,13 @@ Song.prototype.renderSongBox = function() {
     html = html.replace("{album-art}", this.albumArt);
     html = $(html);
 
+    var artist = this.artist;
+
     html.find('.artist').attr('title', this.artist);
-    html.find('.artist a').text(this.artist);
+    html.find('.artist a').text(this.artist).click(function(event) {
+        event.preventDefault();
+        retrieveArtistInfo(artist);
+    });
     html.find('.album').text(this.album).attr('title', this.album);
     html.find('.title').text(this.title).attr('title', this.title);
 
