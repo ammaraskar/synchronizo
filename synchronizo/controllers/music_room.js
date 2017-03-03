@@ -132,6 +132,21 @@ function onUserRoomQuit(room, user) {
     io.to(room.name).emit('userQuit', user.summarize());
 }
 
+function getUser(authToken, socket) {
+    if (!authToken) {
+        return new User('Anonymous', socket);
+    }
+
+    var profile = app.locals.tokens[authToken];
+    if (!profile) {
+        return new User('Anonymous', socket);
+    }
+
+    var user = new User(profile.displayName, socket);
+    user.avatar = "https://graph.facebook.com/" + profile.id + "/picture?type=large";
+    return user;
+}
+
 io.on('connection', function(socket) {
     var joinedRoom;
     var user;
@@ -147,10 +162,9 @@ io.on('connection', function(socket) {
         var room = app.locals.rooms[roomName];
         joinedRoom = room;
 
-        console.log("user joining " + room.name);
+        user = getUser(data.authToken, socket);
 
-        user = new User('Anonymous', socket);
-
+        console.log(user.username + " joining " + room.name);
         onUserRoomJoin(room, user);
     });
 

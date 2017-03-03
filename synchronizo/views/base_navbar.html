@@ -1,15 +1,6 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=121107358415107";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -19,10 +10,10 @@
             </div>
             <div class="modal-body text-center">
                 <p>
-                    Log in with facebook
-                </p>
-                <p>
-                    <div class="fb-login-button" data-max-rows="4" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false"></div>
+                    <a href="/auth/facebook" class="btn btn-block btn-social btn-facebook">
+                        <span><img src="/images/facebook-icon.png"></span>
+                        Sign in with Facebook
+                    </a>
                 </p>
             </div>
         </div><!-- /.modal-content -->
@@ -50,12 +41,13 @@
                     <li class="active"><a href="/">Home <span class="sr-only">(current)</span></a></li>
                 </ul>
 
-                {# this will eventually be triggered based on whether a user is logged in or not #}
-                {% if true %}
                 <ul class="nav navbar-nav navbar-right">
+                {% if user %}
+                    <li><a data-toggle="modal" data-target="#loginModal" href="#">Logged in as {{ user.displayName }} <span class="glyphicon glyphicon-log-in"></span></a></li>
+                {% else %}
                     <li><a data-toggle="modal" data-target="#loginModal" href="#">Login <span class="glyphicon glyphicon-log-in"></span></a></li>
-                </ul>
                 {% endif %}
+                </ul>
             </div>
         </div>
     </nav>

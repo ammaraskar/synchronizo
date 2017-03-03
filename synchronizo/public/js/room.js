@@ -4,7 +4,7 @@ var users = {};
 var songs = {};
 
 socket.on('connect', function(data) {
-    socket.emit('join', {'room': ROOM_NAME});
+    socket.emit('join', {room: ROOM_NAME, authToken: AUTH_TOKEN});
 });
 
 socket.on('newUserJoin', function(data) {
@@ -66,7 +66,7 @@ function retrieveArtistInfo(artist) {
 }
 
 function onNewUserJoin(user) {
-    var user = new User(user.id, user.username);
+    var user = new User(user.id, user.username, user.avatar);
 
     if (user.id in users) {
         // update the exixting user
@@ -84,9 +84,10 @@ function onUserQuit(user) {
     delete users[user.id];
 }
 
-function User(id, username) {
+function User(id, username, avatar) {
     this.id = id;
     this.username = username;
+    this.avatar = avatar;
 
     this.renderedBox = $("");
 }
@@ -98,7 +99,7 @@ User.prototype.setRenderedBox = function(renderedBox) {
 User.prototype.renderUserBox = function () {
     var html = $($("#userDisplayTemplate").html());
     //set user avatar to whatever
-    //html.find('.user-avatar').
+    html.find('.user-avatar').attr('src', this.avatar);
     html.find('.user-name').text(this.username);
     return html;
 };

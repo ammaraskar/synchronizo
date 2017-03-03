@@ -7,6 +7,11 @@
 {% block bodyend %}
 <script>
 var ROOM_NAME = "{{ room.name }}";
+{% if user %}
+    var AUTH_TOKEN = "{{ user.socketioToken }}";
+{% else %}
+    var AUTH_TOKEN = null;
+{% endif %}
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>

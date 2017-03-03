@@ -13,6 +13,7 @@ router.get('/', function(req, res) {
         rooms.push(app.locals.rooms[room]);
     }
 
+    console.log(req.user);
     res.render('public/index.html', {rooms: rooms});
 });
 

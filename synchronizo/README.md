@@ -47,6 +47,8 @@ of a config file is like this:
 ```js
 var config = {};
 
+config.sessionSecret = "RANDOM STRING";
+
 config.lastfm = {};
 config.lastfm.api_key = "API_KEY";
 config.lastfm.secret = "SECRET";
