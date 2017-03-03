@@ -181,6 +181,13 @@ Song.prototype.setUploadedFile = function(uploadedFile, callback) {
 
         readableStream.close();
         callback(null);
+        _this.updateFromLastFM(function() {
+            // update info from last.fm in case we picked up any new
+            // metadata from reading the full file. But do this outside
+            // the callback, this means that old clients won't get the
+            // newly updated info but anyone new connecting to the room
+            // will.
+        });
     });
 }
 

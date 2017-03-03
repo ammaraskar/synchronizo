@@ -110,7 +110,7 @@ function changeSong(id) {
 function onSongChange(id) {
     var song = songs[id];
 
-    $(".song .active").removeClass("active");
+    $(".song.active").removeClass("active");
     song.rendered.addClass("active");
 
     wavesurfer.load(ROOM_NAME + '/song/' + id);

@@ -2,23 +2,6 @@
 
 Here lives the source code for the Synchronizo webapp.
 
-## Configuration
-
-`config.js` is the configuration file for the project.  It is part of .gitignore
-to avoid accidentally committing secrets etc to version control. An example
-of a config file is like this:
-
-```js
-var config = {};
-
-config.lastfm = {};
-config.lastfm.api_key = "asdf";
-config.lastfm.secret = "asdf";
-
-module.exports = config;
-```
-
-
 ## Directory Structure
 
 `/tests` contains unit tests
@@ -54,3 +37,23 @@ If developing, you may want to `npm install -g nodemon` and then use
 
 1. Change into this directory
 2. `npm test`
+
+## Configuration
+
+`config.js` is the configuration file for the project.  It is part of .gitignore
+to avoid accidentally committing secrets etc to version control. An example
+of a config file is like this:
+
+```js
+var config = {};
+
+config.lastfm = {};
+config.lastfm.api_key = "API_KEY";
+config.lastfm.secret = "SECRET";
+
+config.facebook = {};
+config.facebook.app_id = "APP_ID";
+config.facebook.secret = "SECRET";
+
+module.exports = config;
+```

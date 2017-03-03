@@ -1,5 +1,6 @@
 var express = require('express');
 var nunjucks = require('nunjucks');
+var passport = require('passport');
 
 var app = express();
 module.exports.app = app;
