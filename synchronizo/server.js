@@ -34,7 +34,6 @@ if (config) {
             clientID: config.facebook.app_id,
             clientSecret: config.facebook.secret,
             callbackURL: config.facebook.callbackURL
-            callbackURL: 'http://localhost:8080/auth/facebook/callback'
         },
         function(accessToken, refreshToken, profile, cb) {
             profile.socketioToken = crypto.randomBytes(20).toString('hex');
