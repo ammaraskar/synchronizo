@@ -14,12 +14,13 @@ var ROOM_NAME = "{{ room.name }}";
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.3.2/wavesurfer.min.js"></script>
 
 <script>
-$( document ).ready(function() {
-    var wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        scrollParent: false,
-    });
-    wavesurfer.load('http://ia902606.us.archive.org/35/items/shortpoetry_047_librivox/song_cjrg_teasdale_64kb.mp3');
+var wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    scrollParent: false,
+    backend: 'MediaElement'
+});
+wavesurfer.on('ready', function () {
+    wavesurfer.play();
 });
 </script>
 {% endblock %}
@@ -70,10 +71,10 @@ $( document ).ready(function() {
                     <button type="button" class="btn btn-primary btn-large" aria-label="Fast-Backward">
                         <span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
                     </button>
-                    <button type="button" class="btn btn-primary btn-large" aria-label="Play">
+                    <button onclick="wavesurfer.play()" type="button" class="btn btn-primary btn-large" aria-label="Play">
                         <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                     </button>
-                    <button type="button" class="btn btn-primary btn-large" aria-label="Pause">
+                    <button onclick="wavesurfer.pause()" type="button" class="btn btn-primary btn-large" aria-label="Pause">
                         <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                     </button>
                     <button type="button" class="btn btn-primary btn-large" aria-label="Fast-Backward">

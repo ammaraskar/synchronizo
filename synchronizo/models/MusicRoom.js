@@ -1,10 +1,45 @@
 var lastfm = require("../helpers/lastfm");
+var fs = require('fs');
+var mm = require('musicmetadata');
+
 
 // Class declaration for a MusicRoom
 function MusicRoom(name) {
     this.name = name;
     this.users = [];
     this.songs = [];
+
+    this.currentlyPlayingSong = -1;
+    this.currentSongTimestamp = -1;
+}
+
+MusicRoom.prototype.validateSongInRoom = function(song) {
+    for (var i = 0; i < this.songs.length; i++) {
+        if (this.songs[i] == song) {
+            return true;
+        }
+    }
+
+    throw new Error("song not in music room!");
+}
+
+MusicRoom.prototype.onSongUpload = function(song) {
+    this.validateSongInRoom(song);
+
+    // if this is the first song uploaded, make it play
+    if (this.currentlyPlayingSong == -1) {
+        var id = song.id;
+        this.changeSong(id);
+    }
+}
+
+MusicRoom.prototype.changeSong = function(id) {
+    this.currentlyPlayingSong = id;
+    this.currentSongTimestamp = 0;
+
+    if (this.io) {
+        this.io.to(this.name).emit('changeSong', id);
+    }
 }
 
 MusicRoom.prototype.addSong = function(song) {
@@ -98,6 +133,8 @@ function Song(artist, album, title, filename) {
 
     this.uploading = true;
     this.uploadProgress = 0;
+
+    this.duration = 0;
 }
 
 Song.prototype.setUploader = function(uploader) {
@@ -108,10 +145,39 @@ Song.prototype.setProgress = function(progress) {
     this.uploadProgress = progress;
 }
 
-Song.prototype.setUploadedFile = function(uploadedFile) {
+Song.prototype.setUploadedFile = function(uploadedFile, callback) {
     this.uploadedFile = uploadedFile;
     this.uploading = false;
     this.uploadProgress = 100;
+
+    var _this = this;
+
+    var readableStream = fs.createReadStream(uploadedFile);
+    var parser = mm(readableStream, { duration: true }, function (err, metadata) {
+        if (err) {
+            callback(err);
+            console.err(err);
+        }
+
+        console.log(metadata);
+        if (metadata.duration) {
+            _this.duration = metadata.duration;
+        }
+
+        // see if we have any new information about the artist, song, album etc
+        if (metadata.title && !_this.title) {
+            _this.title = metadata.title;
+        }
+        if (metadata.album && !_this.album) {
+            _this.album = metadata.album;
+        }
+        if (metadata.artist.length > 0 && !_this.artist) {
+            _this.artist = metadata.artist[0];
+        }
+
+        readableStream.close();
+        callback(null);
+    });
 }
 
 Song.prototype.summarize = function() {

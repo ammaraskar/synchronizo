@@ -14,6 +14,7 @@ var createNewRoom = MusicRoom.createNewRoom;
 
 router.get('/create', function(req, res) {
     var room = createNewRoom(app.locals.rooms);
+    room.io = io;
 
     res.redirect(room.name);
 });
@@ -29,7 +30,34 @@ router.get('/:roomName', function (req, res) {
 
     var room = app.locals.rooms[name];
     res.render('public/room.html', {room: room});
-})
+});
+
+router.get('/:roomName/song/:id', function(req, res) {
+    var name = req.params.roomName;
+
+    if (!(name in app.locals.rooms)) {
+        res.status(404);
+        res.send("Room not found");
+        return;
+    }
+
+    var id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        res.status(400);
+        res.send("Song id must be an integer");
+        return;
+    }
+
+    var room = app.locals.rooms[name];
+
+    if (id < 0 || id >= room.songs.length) {
+        res.status(400);
+        res.send("Invalid song id, must be an uploaded song index");
+    }
+
+    var song = room.songs[id];
+    res.download(song.uploadedFile);
+});
 
 router.post('/:roomName/upload', upload.single('song'), function (req, res) {
     var name = req.params.roomName;
@@ -48,9 +76,19 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
 
     var song = room.findUploadingSong(filename);
     if (song) {
-        song.setUploadedFile(saved_file);
-        emitSongUploaded(room, song);
-        res.status(204).end();
+        song.setUploadedFile(saved_file, function(err) {
+            if (err) {
+                res.status(500).end();
+                return;
+            }
+
+            emitSongUploaded(room, song);
+            room.onSongUpload(song);
+
+            console.log("Uploaded song", song);
+
+            res.status(204).end();
+        });
     } else {
         res.status(500).end();
     }
@@ -79,6 +117,10 @@ function onUserRoomJoin(room, user) {
     // propogate currently added songs
     for (var i = 0; i < room.songs.length; i++) {
         user.socket.emit('songUpdate', room.songs[i].summarize());
+    }
+    // tell the client the currently playing song
+    if (room.currentlyPlayingSong != -1) {
+        user.socket.emit('changeSong', room.currentlyPlayingSong);
     }
     // inform others of this user's joining
     io.to(room.name).emit('newUserJoin', user.summarize());
@@ -143,7 +185,7 @@ io.on('connection', function(socket) {
             song.setUploader(socket);
 
             song.updateFromLastFM(function() {
-                console.log(song);
+                console.log(user.name + " uploading ", song.summarize());
                 joinedRoom.addSong(song);
 
                 socket.emit('uploadApproved');

@@ -28,6 +28,12 @@ socket.on('songUpdate', function(data) {
     onSongUpdate(data);
 });
 
+socket.on('changeSong', function(id) {
+    console.log("song changing to " + id);
+
+    onSongChange(id);
+});
+
 var RETRIEVING_ALREADY = false;
 function retrieveArtistInfo(artist) {
     if (RETRIEVING_ALREADY) {
@@ -96,6 +102,15 @@ User.prototype.renderUserBox = function () {
     html.find('.user-name').text(this.username);
     return html;
 };
+
+function onSongChange(id) {
+    var song = songs[id];
+
+    $(".song .active").removeClass("active");
+    song.rendered.addClass("active");
+
+    wavesurfer.load(ROOM_NAME + '/song/' + id);
+}
 
 function onSongUpdate(song) {
     if (song.id in songs) {
@@ -200,7 +215,7 @@ $( document ).ready(function() {
 
     function onFileSelect(file) {
         $("#upload-button").addClass("disabled");
-        var blob = file.slice(0, 1023);
+        var blob = file.slice(0, 2048);
 
         socket.emit('preUploadMeta', {filename: file.name, metadata: blob});
 
