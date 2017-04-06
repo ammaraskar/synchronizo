@@ -60,10 +60,6 @@ wavesurfer.on('ready', function () {
 </script>
 
     <div class="container-fluid">
-        <div class="page-header text-center">
-            <h1><small>Currently listening in the </small> {{ room.name }} <small>room</small></h1>
-        </div>
-
         <div id="error" style="display: none" class="row">
             <div class="col-md-4 col-md-offset-4">
                 <div class="text-center alert alert-danger">
@@ -97,7 +93,7 @@ wavesurfer.on('ready', function () {
                 </div>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Who's here?</div>
                     <div class="panel-body">
@@ -106,11 +102,33 @@ wavesurfer.on('ready', function () {
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Who's talking?</div>
+                    <div class="panel-body chat-panel">
+                        <ul class="chat-box list-unstyled">
+                        </ul>
+
+                        <div style="padding:0" class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <label class="sr-only" for="chat-message-input">Message</label>
+                                    <input type="text" class="input-sm form-control" id="chat-message-input" placeholder="Message">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="chat-send-button" type="submit" class="btn btn-primary btn-sm btn-block">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row">
             <div class="col-md-4">
-                <div class="panel panel-default">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
                         Artist Info
                         <span id="artist-info-name" class="pull-right" style="font-weight:bold">

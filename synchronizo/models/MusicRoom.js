@@ -9,9 +9,35 @@ function MusicRoom(name) {
     this.users = [];
     this.songs = [];
 
+    this.messages = [];
+
     this.currentlyPlayingSong = -1;
     this.currentSongTimestamp = -1;
 }
+
+MusicRoom.prototype.messageSent = function(user, message) {
+    if (typeof message != 'string') {
+        return;
+    }
+
+    if (message.length > 150) {
+        return;
+    }
+
+    data = {
+        type: 'chat',
+        user: user.username,
+        message: message
+    };
+    this.broadcastChatMessage(data);
+}
+
+MusicRoom.prototype.broadcastChatMessage = function(message) {
+    this.messages.push(message);
+    if (this.io) {
+        this.io.to(this.name).emit('onMessage', message);
+    }
+};
 
 MusicRoom.prototype.validateSongInRoom = function(song) {
     for (var i = 0; i < this.songs.length; i++) {
@@ -41,13 +67,27 @@ MusicRoom.prototype.changeSong = function(id) {
     this.currentlyPlayingSong = id;
     this.currentSongTimestamp = 0;
 
+    this.broadcastChatMessage({
+        type: 'event',
+        message: "Song changed to <b></b>",
+        subjects: [this.songs[id].title]
+    });
+
     if (this.io) {
         this.io.to(this.name).emit('changeSong', id);
     }
 }
 
-MusicRoom.prototype.addSong = function(song) {
+MusicRoom.prototype.addSong = function(user, song) {
     var id = this.songs.length;
+
+    if (song.title) {
+        this.broadcastChatMessage({
+            type: 'event',
+            message: "<b></b> is uploading <b></b>",
+            subjects: [user.username, song.title]
+        });
+    }
 
     song.id = id;
     this.songs.push(song);
@@ -56,12 +96,24 @@ MusicRoom.prototype.addSong = function(song) {
 MusicRoom.prototype.addUser = function(user) {
     var id = this.users.length;
 
+    this.broadcastChatMessage({
+        type: 'event',
+        message: "<b></b> joined the room",
+        subjects: [user.username]
+    });
+
     user.id = id;
     this.users.push(user);
 }
 
 MusicRoom.prototype.removeUser = function(user) {
     var id = user.id;
+
+    this.broadcastChatMessage({
+        type: 'event',
+        message: "<b></b> left the room",
+        subjects: [user.username]
+    });
 
     this.users.splice(id, 1);
 }

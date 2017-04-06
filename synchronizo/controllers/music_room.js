@@ -114,6 +114,10 @@ function onUserRoomJoin(room, user) {
     for (var i = 0; i < room.users.length; i++) {
         user.socket.emit('newUserJoin', room.users[i].summarize());
     }
+    // propogate last 100 messages
+    for (var i = 0; i < room.messages.length; i++) {
+        user.socket.emit('onMessage', room.messages[i]);
+    }
     // propogate currently added songs
     for (var i = 0; i < room.songs.length; i++) {
         user.socket.emit('songUpdate', room.songs[i].summarize());
@@ -168,6 +172,14 @@ io.on('connection', function(socket) {
         onUserRoomJoin(room, user);
     });
 
+    socket.on('sendMessage', function(message) {
+        if (!joinedRoom) {
+            return;
+        }
+
+        joinedRoom.messageSent(user, message);
+    });
+
     socket.on('clientChangeSong', function(id) {
         if (!joinedRoom) {
             return;
@@ -208,7 +220,7 @@ io.on('connection', function(socket) {
 
             song.updateFromLastFM(function() {
                 console.log(user.name + " uploading ", song.summarize());
-                joinedRoom.addSong(song);
+                joinedRoom.addSong(user, song);
 
                 socket.emit('uploadApproved');
                 emitSongUpdate(joinedRoom, song);
