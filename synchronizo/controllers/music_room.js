@@ -116,6 +116,12 @@ function onUserRoomJoin(room, user) {
     }
     // propogate last 100 messages
     for (var i = 0; i < room.messages.length; i++) {
+        var message = room.messages[i];
+        // avoid animating every message except the last
+        // to prevent animating a lot for existing messages
+        if (i != room.messages.length - 1) {
+            message.noAnimate = true;
+        }
         user.socket.emit('onMessage', room.messages[i]);
     }
     // propogate currently added songs

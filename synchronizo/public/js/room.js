@@ -256,6 +256,11 @@ socket.on('onMessage', function(data) {
 
     var chat_box = $(".chat-box");
     chat_box.append(renderedMessage);
+    
+    if (data.noAnimate) {
+        return;
+    }
+
     chat_box.animate({ scrollTop: chat_box[0].scrollHeight }, 'fast');
 });
 
