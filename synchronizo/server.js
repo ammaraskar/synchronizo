@@ -75,6 +75,14 @@ var server = app.listen(8000, function(){
     console.log("We have started our server on port 8000");
 });
 
+// ping every room every 0.5 seconds so they may update their internal
+// timers
+setInterval(function pingRooms() {
+    for (var roomName in app.locals.rooms) {
+        app.locals.rooms[roomName].timerPing();
+    }
+}, 500);
+
 io = require('socket.io')(server);
 
 // Hook up all the actual routes to the main app

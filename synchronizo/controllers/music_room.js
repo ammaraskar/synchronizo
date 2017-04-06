@@ -186,6 +186,34 @@ io.on('connection', function(socket) {
         joinedRoom.messageSent(user, message);
     });
 
+    socket.on('playSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.playSong(user);
+    });
+
+    socket.on('pauseSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.pauseSong(user);
+    });
+
+    socket.on('nextSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.nextSong(user);
+    });
+
+    socket.on('previousSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.previousSong(user);
+    });
+
     socket.on('clientChangeSong', function(id) {
         if (!joinedRoom) {
             return;

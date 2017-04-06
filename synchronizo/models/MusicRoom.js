@@ -13,6 +13,52 @@ function MusicRoom(name) {
 
     this.currentlyPlayingSong = -1;
     this.currentSongTimestamp = -1;
+    this.lastPing = -1;
+    this.paused = false;
+}
+
+MusicRoom.prototype.timerPing = function() {
+    if (this.lastPing == -1) {
+        this.lastPing = Date.now();
+        return;
+    }
+    if (this.currentlyPlayingSong == -1) {
+        return;
+    }
+    if (this.currentSongTimestamp == -1) {
+        return;
+    }
+    if (this.paused) {
+        return;
+    }
+
+    var elapsed = Date.now() - this.lastPing;
+
+    // move the currentSongTimestamp forward by elapsed time
+    var elapsedSeconds = elapsed * 1.0 / 1000;
+    this.currentSongTimestamp += elapsedSeconds;
+
+    if (this.currentSongTimestamp >= this.songs[this.currentlyPlayingSong].duration) {
+        // is there a next song? if so, play it, else stop playing.
+        if (this.currentlyPlayingSong + 1 == this.songs.length) {
+            this.currentSongTimestamp = -1;
+        } else {
+            this.changeSong(this.currentlyPlayingSong + 1);
+        }
+    }
+
+    // broadcast current song and its timestamp so clients may
+    // keep themselves in sync
+    if (this.io) {
+        var currentSong = this.songs[this.currentlyPlayingSong];
+        this.io.to(this.name).emit('currentSongPing', {
+            songId: this.currentlyPlayingSong,
+            duration: this.currentSongTimestamp,
+            floatDuration: this.currentSongTimestamp * 1.0 / currentSong.duration
+        });
+    }
+
+    this.lastPing = Date.now();
 }
 
 MusicRoom.prototype.messageSent = function(user, message) {
@@ -38,6 +84,34 @@ MusicRoom.prototype.broadcastChatMessage = function(message) {
         this.io.to(this.name).emit('onMessage', message);
     }
 };
+
+MusicRoom.prototype.playSong = function(user) {
+    if (this.io) {
+        this.io.to(this.name).emit('playSong');
+    }
+}
+
+MusicRoom.prototype.pauseSong = function(user) {
+    if (this.io) {
+        this.io.to(this.name).emit('pauseSong');
+    }
+}
+
+MusicRoom.prototype.previousSong = function(user) {
+    if (this.currentlyPlayingSong <= 0) {
+        return;
+    }
+
+    this.changeSong(this.currentlyPlayingSong - 1);
+}
+
+MusicRoom.prototype.nextSong = function(user) {
+    if (this.currentlyPlayingSong == this.songs.length - 1) {
+        return;
+    }
+
+    this.changeSong(this.currentlyPlayingSong + 1);
+}
 
 MusicRoom.prototype.validateSongInRoom = function(song) {
     for (var i = 0; i < this.songs.length; i++) {

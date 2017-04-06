@@ -40,6 +40,20 @@ socket.on('songSeeked', function(progress) {
     wavesurfer.seekTo(progress);
 });
 
+socket.on('currentSongPing', function(data) {
+    // check if we are within ~10 seconds of the duration on the server side,
+    // if not, seek to the duration
+    var serverDuration = data.duration;
+    var ourDuration = wavesurfer.getCurrentTime();
+
+    if (Math.abs(serverDuration - ourDuration) > 10) {
+        console.log("[socket.io] out of sync with server side");
+        console.log("[socket.io] seeking to " + data.floatDuration);
+        wavesurfer.seekDisabled = true;
+        wavesurfer.seekTo(data.floatDuration);
+    }
+});
+
 var RETRIEVING_ALREADY = false;
 function retrieveArtistInfo(artist) {
     if (RETRIEVING_ALREADY) {
@@ -138,6 +152,14 @@ function onSongUpdate(song) {
         songs[song.id] = song;
     }
 }
+
+socket.on('playSong', function() {
+    wavesurfer.play();
+});
+
+socket.on('pauseSong', function() {
+    wavesurfer.pause();
+});
 
 socket.on('songUploadProgress', function(data) {
     if (!(data.id in songs)) {
