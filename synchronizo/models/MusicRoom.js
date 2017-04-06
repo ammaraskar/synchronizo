@@ -59,6 +59,24 @@ MusicRoom.prototype.onSongUpload = function(song) {
     }
 }
 
+MusicRoom.prototype.seekSong = function(user, progress) {
+    if (this.currentlyPlayingSong == -1) {
+        return;
+    }
+
+    if (progress < 0 || progress > 1) {
+        return;
+    }
+
+    var currentSong = this.songs[this.currentlyPlayingSong];
+    this.currentSongTimestamp = progress * currentSong.duration;
+
+    if (this.io) {
+        var progressFloat = this.currentSongTimestamp * 1.0 / currentSong.duration;
+        this.io.to(this.name).emit('songSeeked', progressFloat);
+    }
+}
+
 MusicRoom.prototype.changeSong = function(id) {
     if (id < 0 || id >= this.songs.length) {
         throw new Error("changing song to invalid index");

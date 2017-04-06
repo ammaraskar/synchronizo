@@ -27,6 +27,21 @@ var wavesurfer = WaveSurfer.create({
 wavesurfer.on('ready', function () {
     wavesurfer.play();
 });
+// if we just seeked based on the server's request to seek, do not
+// react to the seek listener, otherwise we create an infinite loop
+// where we think we seeked, so we update the server, which updates us
+// which causes us to think we seeked and so on.....
+
+wavesurfer.seekDisabled = false;
+wavesurfer.on('seek', function(progress) {
+    if (wavesurfer.seekDisabled) {
+        wavesurfer.seekDisabled = false;
+        return;
+    }
+
+    console.log("seeked locally to " + progress);
+    socket.emit('seekSong', {progress: progress});
+});
 </script>
 {% endblock %}
 

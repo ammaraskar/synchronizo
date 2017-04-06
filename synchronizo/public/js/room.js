@@ -34,6 +34,12 @@ socket.on('changeSong', function(id) {
     onSongChange(id);
 });
 
+socket.on('songSeeked', function(progress) {
+    console.log("[socket.io] seeking to " + progress);
+    wavesurfer.seekDisabled = true;
+    wavesurfer.seekTo(progress);
+});
+
 var RETRIEVING_ALREADY = false;
 function retrieveArtistInfo(artist) {
     if (RETRIEVING_ALREADY) {
@@ -256,7 +262,7 @@ socket.on('onMessage', function(data) {
 
     var chat_box = $(".chat-box");
     chat_box.append(renderedMessage);
-    
+
     if (data.noAnimate) {
         return;
     }

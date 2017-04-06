@@ -194,6 +194,14 @@ io.on('connection', function(socket) {
         joinedRoom.changeSong(id);
     });
 
+    socket.on('seekSong', function(data) {
+        if (!joinedRoom) {
+            return;
+        }
+
+        joinedRoom.seekSong(user, data.progress);
+    });
+
     socket.on('uploadProgress', function(data) {
         if (!joinedRoom) {
             return;
