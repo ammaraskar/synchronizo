@@ -4,6 +4,7 @@
   "description": "A webapp for synchronized music listening",
   "license": "Apache-2.0",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "express": "^4.15.0",
     "express-session": "^1.15.1",
     "id3-parser": "^1.2.0",

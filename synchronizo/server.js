@@ -3,6 +3,7 @@ var nunjucks = require('nunjucks');
 var passport = require('passport');
 var crypto = require('crypto');
 var Sequelize = require('sequelize');
+var bodyParser = require('body-parser');
 var Strategy = require('passport-facebook').Strategy;
 try {
     var config = require('./config');
@@ -52,8 +53,6 @@ if (config) {
             var socketioToken = crypto.randomBytes(20).toString('hex');
             profile.socketioToken = socketioToken;
 
-            app.locals.tokens[socketioToken] = profile;
-
             DBUser.findOne({
                 facebookId: profile.id
             }).then(function(user) {
@@ -74,6 +73,9 @@ if (config) {
                     socketioToken: socketioToken
                 });
             }).then(function(userRecord) {
+                profile.globalId = userRecord.id;
+                app.locals.tokens[socketioToken] = profile;
+
                 return cb(null, userRecord);
             }).catch(function(error) {
                 console.error("Error occured while trying to find user", error);
@@ -114,6 +116,9 @@ app.use(function(req, res, next){
 
 // Serve static files from express for now
 app.use(express.static('public'));
+
+// parse post request bodies
+app.use(bodyParser.urlencoded({ extended: true }));
 
 var server = app.listen(8000, function(){
     console.log("We have started our server on port 8000");

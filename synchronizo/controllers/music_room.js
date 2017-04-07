@@ -156,6 +156,7 @@ function getUser(authToken, socket) {
 
     var user = new User(profile.displayName, socket);
     user.avatar = "https://graph.facebook.com/" + profile.id + "/picture?type=large";
+    user.globalId = profile.globalId;
     return user;
 }
 

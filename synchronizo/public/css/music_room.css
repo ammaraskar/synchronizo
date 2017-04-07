@@ -51,6 +51,10 @@
     width: 200px;
 }
 
+.user-name a {
+    color: white;
+}
+
 .hovereffect {
     margin-right: 10px;
     margin-bottom: 3px;

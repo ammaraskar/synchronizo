@@ -1,6 +1,7 @@
 var lastfm = require("../helpers/lastfm");
 var fs = require('fs');
 var mm = require('musicmetadata');
+var DBUser = require('../models/User').DBUser;
 
 
 // Class declaration for a MusicRoom
@@ -169,6 +170,26 @@ MusicRoom.prototype.changeSong = function(id) {
 
     if (this.io) {
         this.io.to(this.name).emit('changeSong', id);
+    }
+
+    // update everyone's last song
+    for (var i = 0; i < this.users.length; i++) {
+        var user = this.users[i];
+        if (user.globalId == -1) {
+            continue;
+        }
+
+        var currentSong = this.songs[this.currentlyPlayingSong];
+        var song = {
+            artist: currentSong.artist || "Unknown",
+            album: currentSong.album || "Unknown",
+            title: currentSong.title || "Unknown",
+            album_art: currentSong.album_art,
+        }
+        song = JSON.stringify(song);
+        DBUser.update({
+            lastSongListened: song
+        }, { where: {id: user.globalId} } );
     }
 }
 

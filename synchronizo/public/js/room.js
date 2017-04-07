@@ -86,7 +86,7 @@ function retrieveArtistInfo(artist) {
 }
 
 function onNewUserJoin(user) {
-    var user = new User(user.id, user.username, user.avatar);
+    var user = new User(user.id, user.username, user.avatar, user.globalId);
 
     if (user.id in users) {
         // update the exixting user
@@ -107,10 +107,11 @@ function onUserQuit(user) {
     delete users[user.id];
 }
 
-function User(id, username, avatar) {
+function User(id, username, avatar, globalId) {
     this.id = id;
     this.username = username;
     this.avatar = avatar;
+    this.globalId = globalId;
 
     this.renderedBox = $("");
 }
@@ -125,6 +126,12 @@ User.prototype.renderUserBox = function () {
     html.attr("id", "user-" + this.id);
     html.find('.user-avatar').attr('src', this.avatar);
     html.find('.user-name').text(this.username);
+
+    if (this.globalId != -1) {
+        html.find('.user-name').text('').append('<a target="_blank" href="/user/' + this.globalId + '"></a>');
+        html.find('.user-name a').text(this.username);
+    }
+
     return html;
 };
 

@@ -1,9 +1,63 @@
 {% extends "base_navbar.html" %}
 
+{% block head %}
+<link href="/css/music_room.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="jumbotron">
             <h1>{{ profile.displayName }} <img src="https://graph.facebook.com/{{ profile.facebookId }}/picture?type=large" class="img-circle img-responsive pull-right"></img></h1>
+
+            <p>Joined on {{ joinDate }}</p>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if lastSong %}
+                        <h2>Last listened to</h2>
+                        <div style="border: 2px solid; border-color: #375a7f; border-radius: 5px; padding: 10px" class="song">
+                            <img width="220" height="220" src="{{lastSong.album_art}}" class="img-rounded" data-toggle="tooltip" data-placement="left">
+                            <figcaption>
+                                <span class="artist" title="{{lastSong.artist}}">
+                                    <a href="#">{{lastSong.artist}}</a>
+                                </span>
+                                <span class="album" title="{{lastSong.album}}">{{lastSong.album}}</span>
+                                <span title="{{lastSong.title}}" class="title">{{lastSong.title}}</span>
+                            </figcaption>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <h2>Bio</h2>
+                        <p>
+                            {% if profile.bio %}
+                                {{ profile.bio }}
+                            {% else %}
+                                Nothing here yet.
+                            {% endif %}
+                        </p>
+                        {% if user.id == profile.id %}
+                        <a class="btn btn-sm btn-info" role="button" data-toggle="collapse" href="#editBio" aria-expanded="false" aria-controls="editBio">
+                            Edit
+                        </a>
+                        <div class="collapse" id="editBio">
+                            <div class="well">
+                                <form method="post" action="/user/edit_bio" class="form-inline">
+                                    <div class="form-group">
+                                        <label for="bio">Bio</label>
+                                        <input name="bio" maxlength="200" type="text" class="form-control" placeholder="Enter a brief bio">
+                                    </div>
+                                    <button type="submit" class="btn btn-default">Save</button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock %}
