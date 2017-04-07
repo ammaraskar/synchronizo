@@ -328,6 +328,7 @@ Song.prototype.setUploadedFile = function(uploadedFile, callback, onNewMetadata)
         if (err) {
             callback(err);
             console.err(err);
+            return;
         }
 
         console.log(metadata);
