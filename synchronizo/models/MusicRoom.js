@@ -86,12 +86,14 @@ MusicRoom.prototype.broadcastChatMessage = function(message) {
 };
 
 MusicRoom.prototype.playSong = function(user) {
+    this.paused = false;
     if (this.io) {
         this.io.to(this.name).emit('playSong');
     }
 }
 
 MusicRoom.prototype.pauseSong = function(user) {
+    this.paused = true;
     if (this.io) {
         this.io.to(this.name).emit('pauseSong');
     }
