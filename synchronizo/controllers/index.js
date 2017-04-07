@@ -33,6 +33,17 @@ router.get('/user/:id', function(req, res) {
             return;
         }
 
+        var isVisible = false;
+        if (user.visibility == "public") {
+            isVisible = true;
+        } else if (user.visibility == "friends") {
+            isVisible = true;
+        } else if (user.visibility == "private") {
+            if (req.user && req.user.id == user.id) {
+                isVisible = true;
+            }
+        }
+
         var joinDate = new Date(user.createdAt).toLocaleString();
         var lastSong = null;
         if (user.lastSongListened) {
@@ -41,7 +52,8 @@ router.get('/user/:id', function(req, res) {
         res.render('public/user_profile.html', {
             profile: user,
             joinDate: joinDate,
-            lastSong: lastSong
+            lastSong: lastSong,
+            isVisible: isVisible
         });
     }).catch(function(error) {
         console.error(error);
@@ -51,15 +63,15 @@ router.get('/user/:id', function(req, res) {
     });
 });
 
-router.post('/user/edit_bio', function(req, res) {
+router.post('/user/edit_profile', function(req, res) {
     if (!req.user) {
         res.status(400);
         res.send("Not logged in");
         return;
     }
-    if (!req.body.bio) {
+    if (!req.body.bio || !req.body.visibility) {
         res.status(400);
-        res.send("Not bio supplied");
+        res.send("All parameters not supplied");
         return;
     }
 
@@ -70,8 +82,16 @@ router.post('/user/edit_bio', function(req, res) {
         return;
     }
 
+    var visibility = req.body.visibility;
+    if (visibility != "public" && visibility != "friends" && visibility != "private") {
+        res.status(400);
+        res.send("Visibility must be public/friends/private");
+        return;
+    }
+
     req.user.update({
-        bio: bio
+        bio: bio,
+        visibility: visibility
     });
     res.redirect('/user/' + req.user.id);
 });

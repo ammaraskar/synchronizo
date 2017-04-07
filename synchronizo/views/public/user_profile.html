@@ -9,6 +9,7 @@
         <div class="jumbotron">
             <h1>{{ profile.displayName }} <img src="https://graph.facebook.com/{{ profile.facebookId }}/picture?type=large" class="img-circle img-responsive pull-right"></img></h1>
 
+            {% if isVisible %}
             <p>Joined on {{ joinDate }}</p>
 
             <div class="container-fluid">
@@ -39,24 +40,33 @@
                             {% endif %}
                         </p>
                         {% if user.id == profile.id %}
-                        <a class="btn btn-sm btn-info" role="button" data-toggle="collapse" href="#editBio" aria-expanded="false" aria-controls="editBio">
+                        <a class="btn btn-sm btn-info" role="button" data-toggle="collapse" href="#editProfile" aria-expanded="false" aria-controls="editProfile">
                             Edit
                         </a>
-                        <div class="collapse" id="editBio">
-                            <div class="well">
-                                <form method="post" action="/user/edit_bio" class="form-inline">
-                                    <div class="form-group">
-                                        <label for="bio">Bio</label>
-                                        <input name="bio" maxlength="200" type="text" class="form-control" placeholder="Enter a brief bio">
-                                    </div>
-                                    <button type="submit" class="btn btn-default">Save</button>
-                                </form>
-                            </div>
+                        <div class="collapse" id="editProfile">
+                            <form method="post" action="/user/edit_profile" class="form-inline">
+                                <div class="form-group">
+                                    <label for="bio">Bio</label>
+                                    <input value="{{ profile.bio }}" name="bio" maxlength="200" type="text" class="form-control" placeholder="Enter a brief bio">
+                                </div>
+                                <div class="form-group">
+                                    <label for="visibility">Visibility</label>
+                                    <select class="form-control" name="visibility">
+                                        <option {% if profile.visibility == "private" %}selected{% endif %} value="private">Private</option>
+                                        <option {% if profile.visibility == "friends" %}selected{% endif %} value="friends">Friends</option>
+                                        <option {% if profile.visibility == "public" %}selected{% endif %} value="public">Public</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-default">Save</button>
+                            </form>
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
+            {% else %}
+            <p>This user has not made their profile visible to you</p>
+            {% endif %}
 
         </div>
     </div>

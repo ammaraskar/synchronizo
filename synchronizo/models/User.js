@@ -26,7 +26,11 @@ var DBUser = sequelize.define('user', {
     socketioToken: Sequelize.STRING,
 
     lastSongListened: Sequelize.TEXT,
-    bio: Sequelize.STRING
+    bio: Sequelize.STRING,
+    visibility: {
+        type: Sequelize.STRING(10),
+        defaultValue: "public"
+    }
 });
 
 module.exports = User;
