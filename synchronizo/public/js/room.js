@@ -90,6 +90,9 @@ function onNewUserJoin(user) {
 
     if (user.id in users) {
         // update the exixting user
+        var renderedBox = user.renderUserBox();
+        $("#user-" + user.id).replaceWith(renderedBox);
+        user.setRenderedBox(renderedBox);
     } else {
         users[user.id] = user;
         var renderedBox = user.renderUserBox();
@@ -119,6 +122,7 @@ User.prototype.setRenderedBox = function(renderedBox) {
 User.prototype.renderUserBox = function () {
     var html = $($("#userDisplayTemplate").html());
     //set user avatar to whatever
+    html.attr("id", "user-" + this.id);
     html.find('.user-avatar').attr('src', this.avatar);
     html.find('.user-name').text(this.username);
     return html;
@@ -140,7 +144,10 @@ function onSongChange(id) {
 
 function onSongUpdate(song) {
     if (song.id in songs) {
+        var existingSong = songs[song.id];
 
+        existingSong.updateFromJSON(song);
+        existingSong.renderIntoDiv(existingSong.rendered);
     } else {
         var song = new Song(song);
 
@@ -180,6 +187,12 @@ socket.on('songUploaded', function(data) {
 });
 
 function Song(song_json) {
+    this.updateFromJSON(song_json);
+
+    this.rendered = $("");
+};
+
+Song.prototype.updateFromJSON = function(song_json) {
     this.id = song_json.id;
 
     this.album = song_json.album;
@@ -189,9 +202,7 @@ function Song(song_json) {
 
     this.uploading = song_json.uploading;
     this.uploadProgress = song_json.uploadProgress;
-
-    this.rendered = $("");
-};
+}
 
 Song.prototype.setProgress = function(html, progress) {
     this.uploadProgress = progress;
@@ -209,12 +220,10 @@ Song.prototype.setRenderedBox = function(rendered) {
     this.rendered = rendered;
 }
 
-Song.prototype.renderSongBox = function() {
-    var html = $("#songDisplayTemplate").html();
-    html = html.replace("{album-art}", this.albumArt);
-    html = $(html);
-
+Song.prototype.renderIntoDiv = function(html) {
     var _this = this;
+
+    html.find('img').attr('src', this.albumArt);
 
     html.find('.artist').attr('title', this.artist);
     html.find('.artist a').text(this.artist).click(function(event) {
@@ -234,7 +243,13 @@ Song.prototype.renderSongBox = function() {
     } else {
         this.markUploaded(html);
     }
+}
 
+Song.prototype.renderSongBox = function() {
+    var html = $("#songDisplayTemplate").html();
+    html = $(html);
+
+    this.renderIntoDiv(html);
     return html;
 }
 

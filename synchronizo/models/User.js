@@ -1,3 +1,6 @@
+var Sequelize = require('sequelize');
+var sequelize = require('../server').sequelize;
+
 function User(username, socket) {
     this.username = username;
     this.socket = socket;
@@ -13,4 +16,12 @@ User.prototype.summarize = function() {
     };
 }
 
+var DBUser = sequelize.define('user', {
+    displayName: Sequelize.STRING,
+    facebookId: Sequelize.STRING,
+    facebookToken: Sequelize.STRING,
+    socketioToken: Sequelize.STRING
+});
+
 module.exports = User;
+module.exports.DBUser = DBUser;

@@ -88,6 +88,8 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
             console.log("Uploaded song", song);
 
             res.status(204).end();
+        }, function onNewMetadata(song) {
+            emitSongUpdate(room, song);
         });
     } else {
         res.status(500).end();

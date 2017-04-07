@@ -1,0 +1,9 @@
+{% extends "base_navbar.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1>{{ profile.displayName }} <img src="https://graph.facebook.com/{{ profile.facebookId }}/picture?type=large" class="img-circle img-responsive pull-right"></img></h1>
+        </div>
+    </div>
+{% endblock %}

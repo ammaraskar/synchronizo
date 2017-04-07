@@ -2,6 +2,7 @@ var express = require('express');
 var nunjucks = require('nunjucks');
 var passport = require('passport');
 var crypto = require('crypto');
+var Sequelize = require('sequelize');
 var Strategy = require('passport-facebook').Strategy;
 try {
     var config = require('./config');
@@ -12,6 +13,14 @@ try {
 
 var app = express();
 module.exports.app = app;
+
+// Initialize database
+var sequelize = new Sequelize('database', null, null, {
+    dialect: 'sqlite',
+    storage: 'testing.db'
+});
+
+module.exports.sequelize = sequelize;
 
 // Initialize the rooms to be empty
 app.locals.rooms = {};
@@ -28,6 +37,10 @@ nunjucks.configure('views', {
 if (config) {
     console.log("Using facebook authentication");
 
+    // create table if necessary
+    var DBUser = require('./models/User').DBUser;
+    DBUser.sync();
+
     app.use(require('express-session')({ secret: config.sessionSecret, resave: true, saveUninitialized: true }));
 
     passport.use(new Strategy({
@@ -36,18 +49,49 @@ if (config) {
             callbackURL: config.facebook.callbackURL
         },
         function(accessToken, refreshToken, profile, cb) {
-            profile.socketioToken = crypto.randomBytes(20).toString('hex');
-            app.locals.tokens[profile.socketioToken] = profile;
-            return cb(null, profile);
+            var socketioToken = crypto.randomBytes(20).toString('hex');
+            profile.socketioToken = socketioToken;
+
+            app.locals.tokens[socketioToken] = profile;
+
+            DBUser.findOne({
+                facebookId: profile.id
+            }).then(function(user) {
+                if (user) {
+                    // ensure we have the latest info from facebook
+                    user.update({
+                        displayName: profile.displayName,
+                        socketioToken: profile.socketioToken
+                    });
+                    return user;
+                }
+
+                // create a new record if necessary
+                return DBUser.create({
+                    displayName: profile.displayName,
+                    facebookId: profile.id,
+                    facebookToken: accessToken,
+                    socketioToken: socketioToken
+                });
+            }).then(function(userRecord) {
+                return cb(null, userRecord);
+            }).catch(function(error) {
+                console.error("Error occured while trying to find user", error);
+                return cb(error);
+            });
         }
     ));
 
     passport.serializeUser(function(user, cb) {
-        cb(null, user);
+        cb(null, user.id);
     });
 
-    passport.deserializeUser(function(obj, cb) {
-        cb(null, obj);
+    passport.deserializeUser(function(id, cb) {
+        DBUser.findById(id).then(function(user) {
+            cb(null, user);
+        }).catch(function(error) {
+            cb(error);
+        });
     });
 
     app.use(passport.initialize());

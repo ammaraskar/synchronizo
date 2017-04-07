@@ -295,7 +295,7 @@ Song.prototype.setProgress = function(progress) {
     this.uploadProgress = progress;
 }
 
-Song.prototype.setUploadedFile = function(uploadedFile, callback) {
+Song.prototype.setUploadedFile = function(uploadedFile, callback, onNewMetadata) {
     this.uploadedFile = uploadedFile;
     this.uploading = false;
     this.uploadProgress = 100;
@@ -329,10 +329,8 @@ Song.prototype.setUploadedFile = function(uploadedFile, callback) {
         callback(null);
         _this.updateFromLastFM(function() {
             // update info from last.fm in case we picked up any new
-            // metadata from reading the full file. But do this outside
-            // the callback, this means that old clients won't get the
-            // newly updated info but anyone new connecting to the room
-            // will.
+            // metadata from reading the full file.
+            onNewMetadata(_this);
         });
     });
 }

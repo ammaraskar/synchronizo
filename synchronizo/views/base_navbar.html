@@ -43,7 +43,16 @@
 
                 <ul class="nav navbar-nav navbar-right">
                 {% if user %}
-                    <li><a data-toggle="modal" data-target="#loginModal" href="#">Logged in as {{ user.displayName }} <span class="glyphicon glyphicon-log-in"></span></a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            Logged in as {{ user.displayName }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/user/{{ user.id }}">View Profile</a></li>
+                            <li><a href="#">Log out <span class="glyphicon glyphicon-log-out"></a></li>
+                        </ul>
+                    </li>
                 {% else %}
                     <li><a data-toggle="modal" data-target="#loginModal" href="#">Login <span class="glyphicon glyphicon-log-in"></span></a></li>
                 {% endif %}
