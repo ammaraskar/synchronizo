@@ -31,6 +31,11 @@ if (!fs.existsSync(DATABASE_PATH)) {
 }
 module.exports.database = database;
 
+var SignedInUser = require('./models/User').SignedInUser;
+for (var i = 0; i < database.users.length; i++) {
+    database.users[i].__proto__ = SignedInUser.prototype;
+}
+
 nunjucks.configure('views', {
     autoescape: true,
     throwOnUndefined: true,
@@ -41,7 +46,6 @@ nunjucks.configure('views', {
 if (config) {
     console.log("Using facebook authentication");
 
-    var SignedInUser = require('./models/User').SignedInUser;
     app.use(require('express-session')({ secret: config.sessionSecret, resave: true, saveUninitialized: true }));
 
     passport.use(new Strategy({

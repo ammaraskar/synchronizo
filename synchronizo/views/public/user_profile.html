@@ -9,9 +9,25 @@
         <div class="jumbotron">
             <h1>{{ profile.displayName }} <img src="https://graph.facebook.com/{{ profile.facebookId }}/picture?type=large" class="img-circle img-responsive pull-right"></img></h1>
 
+
             {% if isVisible %}
             <p>Joined on {{ joinDate }}</p>
+            {% endif %}
 
+            {% if user and user.id != profile.id %}
+                <form method="post" action="/user/follow">
+                    <input type="hidden" name="user_id" value="{{ profile.id }}">
+                    <button type="submit" class="btn btn-primary">
+                    {% if user.isFollowing(profile.id) %}
+                        Unfollow
+                    {% else %}
+                        Follow
+                    {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if isVisible %}
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6">

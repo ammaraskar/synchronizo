@@ -27,10 +27,19 @@ function SignedInUser(facebookId, displayName, socketioToken) {
     this.visibility = "public";
     this.createdAt = new Date(0);
     this.lastSongListened = null;
+    this.followers = {};
 }
 
 SignedInUser.prototype.setId = function(id) {
     this.id = id;
+}
+
+SignedInUser.prototype.isFollowing = function(other_id) {
+    if (this.following[other_id]) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 SignedInUser.create = function create(facebookId, displayName, socketioToken) {

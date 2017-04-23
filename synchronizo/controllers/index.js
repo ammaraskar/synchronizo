@@ -86,4 +86,45 @@ router.post('/user/edit_profile', function(req, res) {
     res.redirect('/user/' + req.user.id);
 });
 
+router.post('/user/follow', function(req, res) {
+    if (!req.user) {
+        res.status(400);
+        res.send("Not logged in");
+        return;
+    }
+    if (!req.body.user_id) {
+        res.status(400);
+        res.send("User id to follow not specified");
+        return;
+    }
+
+    var id = parseInt(req.body.user_id);
+    if (id == NaN) {
+        res.status(400);
+        res.send("User id must be a number");
+        return;
+    }
+
+    if (id == req.user.id) {
+        res.status(400);
+        res.send("Can't follow yourself");
+        return;
+    }
+
+    var userToFollow = SignedInUser.getById(id);
+    if (!userToFollow) {
+        res.status(400);
+        res.send("user with id " + id + " not found");
+        return;
+    }
+
+    if (req.user.following[id]) {
+        delete req.user.following[id];
+    } else {
+        req.user.following[id] = true;
+    }
+
+    res.redirect('/user/' + id);
+});
+
 module.exports = router;
