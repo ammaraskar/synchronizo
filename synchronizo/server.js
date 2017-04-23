@@ -1,8 +1,8 @@
+var fs = require('fs');
 var express = require('express');
 var nunjucks = require('nunjucks');
 var passport = require('passport');
 var crypto = require('crypto');
-var Sequelize = require('sequelize');
 var bodyParser = require('body-parser');
 var Strategy = require('passport-facebook').Strategy;
 try {
@@ -15,18 +15,21 @@ try {
 var app = express();
 module.exports.app = app;
 
-// Initialize database
-var sequelize = new Sequelize('database', null, null, {
-    dialect: 'sqlite',
-    storage: 'testing.db'
-});
-
-module.exports.sequelize = sequelize;
-
 // Initialize the rooms to be empty
 app.locals.rooms = {};
 // socket.io auth tokens
 app.locals.tokens = {};
+
+var DATABASE_PATH = "testing.db";
+if (!fs.existsSync(DATABASE_PATH)) {
+    var database = {
+        users: [],
+        usersByFacebookId: {}
+    };
+} else {
+    var database = JSON.parse(fs.readFileSync(DATABASE_PATH));
+}
+module.exports.database = database;
 
 nunjucks.configure('views', {
     autoescape: true,
@@ -38,10 +41,7 @@ nunjucks.configure('views', {
 if (config) {
     console.log("Using facebook authentication");
 
-    // create table if necessary
-    var DBUser = require('./models/User').DBUser;
-    DBUser.sync();
-
+    var SignedInUser = require('./models/User').SignedInUser;
     app.use(require('express-session')({ secret: config.sessionSecret, resave: true, saveUninitialized: true }));
 
     passport.use(new Strategy({
@@ -53,34 +53,19 @@ if (config) {
             var socketioToken = crypto.randomBytes(20).toString('hex');
             profile.socketioToken = socketioToken;
 
-            DBUser.findOne({
-                facebookId: profile.id
-            }).then(function(user) {
-                if (user) {
-                    // ensure we have the latest info from facebook
-                    user.update({
-                        displayName: profile.displayName,
-                        socketioToken: profile.socketioToken
-                    });
-                    return user;
-                }
+            var user = SignedInUser.getByFacebookId(profile.id);
+            if (user) {
+                // update the existing fields
+                user.displayName = profile.displayName;
+                user.socketioToken = profile.socketioToken;
+            } else {
+                user = SignedInUser.create(profile.id, profile.displayName, profile.socketioToken);
+            }
 
-                // create a new record if necessary
-                return DBUser.create({
-                    displayName: profile.displayName,
-                    facebookId: profile.id,
-                    facebookToken: accessToken,
-                    socketioToken: socketioToken
-                });
-            }).then(function(userRecord) {
-                profile.globalId = userRecord.id;
-                app.locals.tokens[socketioToken] = profile;
+            profile.globalId = user.id;
+            app.locals.tokens[socketioToken] = profile;
 
-                return cb(null, userRecord);
-            }).catch(function(error) {
-                console.error("Error occured while trying to find user", error);
-                return cb(error);
-            });
+            return cb(null, user);
         }
     ));
 
@@ -89,11 +74,7 @@ if (config) {
     });
 
     passport.deserializeUser(function(id, cb) {
-        DBUser.findById(id).then(function(user) {
-            cb(null, user);
-        }).catch(function(error) {
-            cb(error);
-        });
+        cb(null, SignedInUser.getById(id));
     });
 
     app.use(passport.initialize());
@@ -131,6 +112,16 @@ setInterval(function pingRooms() {
         app.locals.rooms[roomName].timerPing();
     }
 }, 500);
+
+// save the database every 4 seconds
+setInterval(function saveDatabase() {
+    var json = JSON.stringify(database);
+    fs.writeFile(DATABASE_PATH, json, 'utf8', function(err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+}, 4000);
 
 io = require('socket.io')(server);
 
