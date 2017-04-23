@@ -1,0 +1,390 @@
+\documentclass[11pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[explicit]{titlesec}
+\usepackage{color, varwidth}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{xhfill}
+\usepackage{soul}
+\graphicspath{{./images/}}
+
+%----------------------------------------------------------------------------------------
+%	SECTION HEADER STYLES
+%----------------------------------------------------------------------------------------
+\setlength{\headheight}{15pt}
+
+\definecolor{darkblue}{RGB}{0,101,135}
+\definecolor{ourblue}{RGB}{0,138,184}
+
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp\textcolor{ourblue}{|}\hsp}{0pt}{#1\Huge\bfseries}
+
+\newcommand\Centered{%
+\titleformat{\section}[hang]
+  {\normalfont\large\filcenter}{}{0em}
+  {\xrfill[0.3ex]{1.0pt}[ourblue]~\begin{varwidth}{.75\linewidth}\centering{\color{darkblue}##1}\end{varwidth}~\xrfill[0.3ex]{1.0pt}[ourblue]}
+}
+
+\newcommand\textline[4][t]{%
+  \par\smallskip\noindent\parbox[#1]{.333\textwidth}{\raggedright#2}%
+  \parbox[c]{.333\textwidth}{\centering#3}%
+  \parbox[c]{.333\textwidth}{\raggedleft#4}\par\smallskip%
+  \vspace{.5\baselineskip}
+}
+
+\titlespacing{\chapter}{12pt plus 4pt minus 2pt}{\parskip}{7pt}
+
+
+\renewcommand\sectionmark[1]{\markboth{#1}{}}
+
+\def\arraystretch{1.6}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\input{./title.tex}
+
+\pagebreak
+
+\chapter{Sprint Overview}
+The work done in this sprint will complete the social networking aspect of our application. By the end of this sprint users will be able to follow/un-follow other users and interact with each other through direct messages and by displaying their recent taste in music. Another large portion of this sprint will be dedicated to giving admin privileges to certain accounts and keeping statistics by user on the certain types of music they listen to. 
+
+\begin{description}
+\item[Scrum Master] Abhijeet Chakrabarti
+
+\item[Meeting Plan] Meeting on Fridays and Saturdays in Hillenbrand lobby.
+
+\item[Risks And Challenges] The biggest risk/challenge associated with this sprint will be the implementation of admin users and listener metrics. Altering the permissions of a user to gain control over other users may prove challenging and keeping track of users' tastes in music by genre may require some algorithmic development to identify genre by songs a user has uploaded/listened to.
+
+\end{description}
+
+\chapter{Current Sprint Details}
+
+\Centered{
+    \section{User Story \#5 \& 6}
+}
+
+As a user, I want to be able to follow other user; As a user I want to be able to have other users follow my account.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+      1  & Create a container in the User model to hold followers & 2 hrs & Back-End &  Brian\\
+      2  & Create a button on user profiles for following & 1 hrs & Front-End & Abhijeet \\
+      3  & Add user to followers container when button is clicked & 3 hrs & Back-End & Brian
+    
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user wants to follow another user, \textit{when} a user clicks follow on another user's profile, \textit{then} the other user will be added to the current user's list of people they are following. 
+    
+   
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#7}
+}
+
+As a user, I want to be able to un-follow other users.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a button on user profiles for un-following & 1 hrs & Front-End & Abhijeet \\
+     2  & Remove user from followers container when button is clicked & 3 hrs & Back-End & Brian \\
+    
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user wants to un-follow another user, \textit{when} the un-follow button is clicked on the other user's profile, \textit{then} that user will be removed from the user's that the current user follows. 
+    
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#9}
+}
+
+As a user, I want to be able to direct message other users.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a messaging center in the UI for messaging other users & 3 hrs & Front-End & Eric \\
+     2  & Create a list of users that each user has recently chatted with & 2 hrs & Back-End & Ammar \\
+     3  & Add ability for users to send private messages between each other & 5 hrs & Back-End & Ammar 
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+\item \textit{Given} a user wants to directly message another user, \textit{when} a user sends a direct message to another user in the messaging center, \textit{then}the other user alone will receive that message and be able to respond.   
+\end{itemize}
+
+\pagebreak
+
+\Centered{
+    \section{User Story \#10}
+}
+
+As a user, I want to be able to invite other users to join my listening party.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create an "invite users" button in the music room UI & 2 hrs & Front-End & Abhijeet \\
+     2  & When button is clicked, display following users to choose from & 3 hrs & Front and Back-End & Eric \\
+     3  & Selected users from list receive an invite to music room & 4 hrs & Back-End & Brian
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user wants to invite another user to a listening room, \textit{when} a user clicks invite to room on the other users profile, \textit{then}the other user will receive a message/link to join that room.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#11}
+}
+
+As a user, I want to be able to permanently leave certain listening parties.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a button in the music room UI for leaving & 2 hrs & Front-End & Abhijeet \\
+     2  & On button clicked remove user from music room's list of users & 3 hrs & Back-End & Brian
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+\item \textit{Given} a user wants to leave a music room, \textit{when} a user presses the leave button, \textit{then} the user will be removed from the music room.
+\end{itemize}
+
+\vspace{4mm}
+
+
+\Centered{
+    \section{User Story \#13}
+}
+
+As a user, I want the ability to block other users.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a button on user profiles for blocking & 2 hrs & Front-End & Abhijeet \\
+     2  & Add user to list of blocked users when button is pressed & 2 hrs & Back-End & Ammar\\
+     3  & Disable communication between newly blocked user and current user & 4 hrs & Back-End & Ammar\\
+
+
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user wants to block another user, \textit{when} a user clicks the block button on another user's profile, \textit{then} communication between that user and the current user will not be allowed.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#14}
+}
+
+As a user, I want the ability to report other users for misconduct.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create a button for reporting users & 2 hrs & Front-End & Abhijeet \\
+     2  & Send message to admin accounts about reported user & 3 hrs & Back-End & Eric\\     
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+   \item \textit{Given} a user wants to report another user, \textit{when} a user clicks the report button, \textit{then} a text box will appear to add information about why the user is reporting the other user and adimin accounts will be notified.
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#21}
+}
+
+As a user, I want to be able to view listener metrics and statistics.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create information section for data on songs & 2 hrs & Front-End & Brian\\
+     2  & When a user listens to a song, increment amount of listens & 3 hrs & Back-End & Eric
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} a user wants to see listener statistics, \textit{when} a user checks the statistics of a certain song, \textit{then} the amount of listens and the users who listened to it will be displayed.
+    
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#22}
+}
+
+As an admin, I want to be able to control user accounts.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Create an admin model that has more privileges than a user & 4 hrs & Back-End & Ammar\\
+     2  & Integrate the admins into the current system like users & 5 hrs & Back-End & Eric
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} admins need to able to control certain aspects of the service, \textit{when} an admin account has been created and logged into, \textit{then} the admin account will be able to control some aspects of user accounts.
+    
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#23}
+}
+
+As an admin, I want to be able to monitor usage of the service.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Give admins ability to monitor user activity & 6 hrs & Back-End & Brian \\
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+    \item \textit{Given} admins need to be able to monitor user activity for unusual/malicious behavior, \textit{when} an admin wants to check on a user, \textit{then} information about the uploads that user has made will be displayed.
+    
+\end{itemize}
+
+
+\Centered{
+    \section{User Story \#24}
+}
+
+As an advertiser, I want to be able to see data on people’s taste in music so I can target ads to them.
+
+\vspace{3mm}
+
+\begin{tabular}{c|c|c|c|c}
+     \# & Description & Time & Team & Owner \\
+     \hline
+     1  & Be able to extract info fro user profiles & 3 hrs & Back-End & Eric \\
+     2  & Create way to display data to potential advertisers & 3 hrs & Back-End & Brian\\
+\end{tabular}
+
+\vspace{4mm}
+
+\subsection*{Acceptance Criteria}
+\begin{itemize}
+  \item \textit{Given} advertisers want to see users' tastes in music, \textit{when} an advertiser wants to target ads towards certain users, \textit{then} advertisers will be able to see which users listen to the type of music they want to advertise towards.
+  
+\end{itemize}
+\pagebreak
+
+\chapter{Remaining Backlog}
+    
+    \begin{enumerate}
+
+    \item \st{As a user, I want to be able to listen to music simultaneously with other people.}
+    
+    \item \st{As a user, I want to to be able to upload my own music.}
+        
+    \item \st{As a user, I want to be able to create an account.}
+    
+    \item \st{As a user, I want to be able to log in to my account.}
+
+    \item As a user, I want to be able to have people follow my account.
+
+    \item As a user, I want to be able to follow other users.
+    
+    \item As a user, I want to be able to un-follow other users.
+    
+    \item \st{As a user, I want to be able to party chat with other users in the same listening party.}
+    
+    \item As a user, I want to be able to direct message other users.
+    
+    \item As a user, I want to be able to invite other users to join my listening party.
+    
+    \item As a user, I want to be able to permanently leave certain listening parties.
+    
+    \item \st{As a user, I want my followers to be able to see the recent music I have listened to.}
+    
+    \item As a user, I want the ability to block other users. 
+    
+    \item As a user, I want the ability to report other users for misconduct.
+    
+    \item \st{As a user, I want to have a profile (picture, bio, favorite music, etc.)}
+    
+    \item \st{As a user, I want to be able to set privacy settings for my account.}
+    
+    \item \st{As a user, I want to be able to create multiple listening parties.}
+    
+    \item \st{As a user, I want to be able to see information about the album for playing tracks.}
+    
+    \item \st{As a user, I want to be able to see information about the artist for playing tracks.}
+
+    \item \st{As a user, I want to be able to control the playback of the music for everyone.}
+    
+    \item As a user, I want to be able to view listener metrics and statistics.
+    
+    \item As an admin, I want to be able to control user accounts.
+    
+    \item As an admin, I want to be able to monitor usage of the service.
+    
+    \item As an advertiser, I want to be able to see data on people's taste in music so I can target ads to them.
+
+\end{enumerate}
+
+\end{document}
