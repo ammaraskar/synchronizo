@@ -10,3 +10,5 @@ people to control music at a party, etc.
 `/documents` contains the LaTeX source files and compiled PDFs for the project
 
 `/synchronizo` is the root of the actual node.js webapp
+
+[![forthebadge](http://forthebadge.com/images/badges/built-with-swag.svg)](http://forthebadge.com)
