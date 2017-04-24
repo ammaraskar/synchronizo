@@ -4,10 +4,14 @@
     <div class="container">
         <div class="jumbotron">
             <h1>Synchronizo</h1>
+        {% if user %}
+            <p>Hi {{ user.displayName }}!</p>
+        {% else %}
             <p>Listening to music is fun, but listening to music with other people is even more fun.</p>
             <p>Synchronizo aims to allow you to easily listen to music simultaneously with people
                when they aren't a stone's throw away. You make a music room, add some music and invite
                some people. It's that simple.
+        {% endif %}
             <p><a href="/room/create" class="btn btn-primary btn-lg">Create A Room Now</a></p>
             {% if rooms.length > 0 %}
                 <p>Rooms in use right now:</p>
@@ -18,5 +22,34 @@
                 </ul>
             {% endif %}
         </div>
+
+        {% if user and user.getFollowing().length > 0 %}
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h3>Following</h3>
+                </div>
+            </div>
+            <div class="row">
+            {% for u in user.getFollowing() %}
+                <div class="col-md-3">
+                    <div class="panel panel-primary text-center">
+                        <div class="panel-heading">
+                            {{u.displayName}}
+                        </div>
+                        <div class="panel-body">
+                            <a href="/user/{{ u.id }}">
+                            <img src="https://graph.facebook.com/{{ u.facebookId }}/picture?type=large" class="img-circle img-responsive center-block"></img>
+                            </a>
+                        </div>
+                        {% if u.getLastSongListened() %}
+                        <div class="panel-footer">
+                            <small><b>{{ u.getLastSongListened().artist }}</b> - {{ u.getLastSongListened().title }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

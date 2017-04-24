@@ -34,6 +34,16 @@ module.exports.database = database;
 var SignedInUser = require('./models/User').SignedInUser;
 for (var i = 0; i < database.users.length; i++) {
     database.users[i].__proto__ = SignedInUser.prototype;
+
+    // database migrations, add new fields if necessary
+    var blankUser = new SignedInUser(null, null, null);
+    for (prop in blankUser) {
+        if (blankUser.hasOwnProperty(prop)) {
+            if (!database.users[i].hasOwnProperty(prop)) {
+                database.users[i][prop] = blankUser[prop];
+            }
+        }
+    }
 }
 
 nunjucks.configure('views', {
@@ -95,6 +105,7 @@ if (config) {
 
 app.use(function(req, res, next){
     res.locals.user = req.user;
+    res.locals.url = req.url;
     next();
 });
 

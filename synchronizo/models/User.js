@@ -26,12 +26,75 @@ function SignedInUser(facebookId, displayName, socketioToken) {
     this.bio = "";
     this.visibility = "public";
     this.createdAt = new Date(0);
-    this.lastSongListened = null;
-    this.followers = {};
+    this.following = {};
+    this.songHistory = [];
+}
+
+SignedInUser.prototype.getLastSongListened = function() {
+    if (this.songHistory.length == 0) {
+        return null;
+    }
+    var id = this.songHistory[this.songHistory.length - 1].song;
+    return database.songs[id];
+}
+
+function timeSince(date) {
+  var seconds = Math.floor((new Date() - date) / 1000);
+  var interval = Math.floor(seconds / 31536000);
+  if (interval > 1) {
+    return interval + " years";
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval > 1) {
+    return interval + " months";
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval > 1) {
+    return interval + " days";
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval > 1) {
+    return interval + " hours";
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval > 1) {
+    return interval + " minutes";
+  }
+  return Math.floor(seconds) + " seconds";
+}
+
+SignedInUser.prototype.getLastSongs = function() {
+    var lastSongs = this.songHistory.slice(-10);
+    var songs = [];
+
+    for (var i = lastSongs.length - 1; i >= 0; i--) {
+        var song = database.songs[lastSongs[i].song];
+        song.timeListened = timeSince(new Date(lastSongs[i].timeListened)) + " ago";
+
+        songs.push(song);
+    }
+
+    return songs;
 }
 
 SignedInUser.prototype.setId = function(id) {
     this.id = id;
+}
+
+SignedInUser.prototype.addListenedSong = function(song) {
+    this.songHistory.push({
+        timeListened: new Date(),
+        song: song.getIdentifier()
+    });
+}
+
+SignedInUser.prototype.getFollowing = function() {
+    var followingUsers = [];
+    var following = Object.keys(this.following);
+    for (var i = 0; i < following.length; i++) {
+        followingUsers.push(SignedInUser.getById(following[i]));
+    }
+    return followingUsers;
 }
 
 SignedInUser.prototype.isFollowing = function(other_id) {

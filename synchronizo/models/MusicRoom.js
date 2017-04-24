@@ -1,6 +1,7 @@
 var lastfm = require("../helpers/lastfm");
 var fs = require('fs');
 var mm = require('musicmetadata');
+var database = require('../server').database;
 var SignedInUser = require('../models/User').SignedInUser;
 
 
@@ -40,10 +41,13 @@ MusicRoom.prototype.timerPing = function() {
     this.currentSongTimestamp += elapsedSeconds;
 
     if (this.currentSongTimestamp >= this.songs[this.currentlyPlayingSong].duration) {
+        this.markCurrentSongPlayed();
+
         // is there a next song? if so, play it, else stop playing.
         if (this.currentlyPlayingSong + 1 == this.songs.length) {
             this.currentSongTimestamp = -1;
         } else {
+            // mark the current song as played for everyone
             this.changeSong(this.currentlyPlayingSong + 1);
         }
     }
@@ -60,6 +64,22 @@ MusicRoom.prototype.timerPing = function() {
     }
 
     this.lastPing = Date.now();
+}
+
+MusicRoom.prototype.markCurrentSongPlayed = function() {
+    var currentSong = this.songs[this.currentlyPlayingSong];
+
+    // update everyone's last song
+    for (var i = 0; i < this.users.length; i++) {
+        var user = this.users[i];
+        if (user.globalId == -1) {
+            continue;
+        }
+
+        SignedInUser.getById(user.globalId).addListenedSong(currentSong);
+    }
+
+    currentSong.getFromDatabase().listenCount += this.users.length;
 }
 
 MusicRoom.prototype.messageSent = function(user, message) {
@@ -180,12 +200,7 @@ MusicRoom.prototype.changeSong = function(id) {
         }
 
         var currentSong = this.songs[this.currentlyPlayingSong];
-        var song = {
-            artist: currentSong.artist || "Unknown",
-            album: currentSong.album || "Unknown",
-            title: currentSong.title || "Unknown",
-            album_art: currentSong.album_art,
-        }
+        var song = currentSong.shortSummary();
 
         SignedInUser.getById(user.globalId).lastSongListened = song;
     }
@@ -289,7 +304,6 @@ function createNewRoom(rooms) {
 }
 
 
-
 function Song(artist, album, title, filename) {
     this.id = -1;
 
@@ -304,6 +318,7 @@ function Song(artist, album, title, filename) {
     this.uploadProgress = 0;
 
     this.duration = 0;
+    this.globalId = -1;
 }
 
 Song.prototype.setUploader = function(uploader) {
@@ -351,8 +366,28 @@ Song.prototype.setUploadedFile = function(uploadedFile, callback, onNewMetadata)
             // update info from last.fm in case we picked up any new
             // metadata from reading the full file.
             onNewMetadata(_this);
+            _this.addToDatabase();
         });
     });
+}
+
+Song.prototype.getFromDatabase = function() {
+    return database.songs[this.getIdentifier()];
+}
+
+Song.prototype.addToDatabase = function() {
+    var songTitleAndArist = this.getIdentifier();
+
+    if (!database.songs[songTitleAndArist]) {
+        var summary = this.shortSummary();
+
+        summary["listenCount"] = 0;
+        database.songs[songTitleAndArist] = summary;
+    }
+}
+
+Song.prototype.getIdentifier = function() {
+    return this.artist + " - " + this.title;
 }
 
 Song.prototype.summarize = function() {
@@ -365,6 +400,15 @@ Song.prototype.summarize = function() {
         uploading: this.uploading,
         uploadProgress: this.uploadProgress
     };
+}
+
+Song.prototype.shortSummary = function() {
+    return {
+        artist: this.artist || "Unknown",
+        album: this.album || "Unknown",
+        title: this.title || "Unknown",
+        album_art: this.album_art,
+    }
 }
 
 Song.prototype.updateFromLastFM = function(callback) {

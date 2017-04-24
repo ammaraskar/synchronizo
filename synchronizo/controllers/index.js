@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var app = require('../server').app;
+var database = require('../server').database;
 var SignedInUser = require('../models/User').SignedInUser;
 
 router.use('/room', require('./music_room'))
@@ -14,8 +15,23 @@ router.get('/', function(req, res) {
         rooms.push(app.locals.rooms[room]);
     }
 
-    console.log(req.user);
     res.render('public/index.html', {rooms: rooms});
+});
+
+router.get('/stats', function(req, res) {
+    var sortedByPlays = [];
+
+    for (song in database.songs) {
+        if (database.songs.hasOwnProperty(song)) {
+            sortedByPlays.push(database.songs[song]);
+        }
+    }
+
+    sortedByPlays.sort(function(a, b) {
+        return b.listenCount - a.listenCount;
+    });
+
+    res.render('public/stats.html', {songs: sortedByPlays});
 });
 
 router.get('/user/:id', function(req, res) {
@@ -45,7 +61,7 @@ router.get('/user/:id', function(req, res) {
     }
 
     var joinDate = new Date(user.createdAt).toLocaleString();
-    var lastSong = user.lastSongListened;
+    var lastSong = user.getLastSongListened();
     res.render('public/user_profile.html', {
         profile: user,
         joinDate: joinDate,

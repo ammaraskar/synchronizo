@@ -1,0 +1,46 @@
+{% extends "base_navbar.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Listener Stats</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2>Songs</h2>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th></th>
+                                    <th>Arist</th>
+                                    <th>Song</th>
+                                    <th>Album</th>
+                                    <th>Times Listened</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for song in songs %}
+                                    <tr>
+                                        <th>{{ loop.index }}</th>
+                                        <th><img class="img-rounded" width="150" height="150" src="{{song.album_art}}"/></th>
+                                        <th>{{ song.artist }}</th>
+                                        <th>{{ song.title }}</th>
+                                        <th>{{ song.album }}</th>
+                                        <th>{{ song.listenCount }}</th>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
