@@ -30,9 +30,9 @@
                                     <tr>
                                         <th>{{ loop.index }}</th>
                                         <th><img class="img-rounded" width="150" height="150" src="{{song.album_art}}"/></th>
-                                        <th>{{ song.artist }}</th>
-                                        <th>{{ song.title }}</th>
-                                        <th>{{ song.album }}</th>
+                                        <th>{{ song.artist  | truncate(30) }}</th>
+                                        <th>{{ song.title | truncate(30) }}</th>
+                                        <th>{{ song.album | truncate(30) }}</th>
                                         <th>{{ song.listenCount }}</th>
                                     </tr>
                                 {% endfor %}

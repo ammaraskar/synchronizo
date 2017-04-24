@@ -105,6 +105,10 @@ SignedInUser.prototype.isFollowing = function(other_id) {
     }
 }
 
+SignedInUser.prototype.isAdmin = function() {
+    return database.admins[this.id];
+}
+
 SignedInUser.create = function create(facebookId, displayName, socketioToken) {
     var user = new SignedInUser(facebookId, displayName, socketioToken);
 

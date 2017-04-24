@@ -38,8 +38,14 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li {% if url == "/" %}class="active"{% endif %}><a href="/">Home <span class="sr-only">(current)</span></a></li>
+                    <li {% if url == "/" %} class="active" {% endif %}><a href="/">Home <span class="sr-only">(current)</span></a></li>
                     <li {% if url == "/stats" %} class="active" {% endif %}><a href="/stats">Stats</span></a></li>
+                    {% if user %}
+                    <li {% if url == "/messages" %} class="active" {% endif %}><a href="/messages">Messages</span></a></li>
+                    {% endif %}
+                    {% if user and user.isAdmin() %}
+                    <li {% if url == "/admin" %} class="active" {% endif %}><a href="/admin">Admin</span></a></li>
+                    {% endif %}
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

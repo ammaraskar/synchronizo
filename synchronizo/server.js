@@ -24,7 +24,10 @@ var DATABASE_PATH = "testing.db";
 if (!fs.existsSync(DATABASE_PATH)) {
     var database = {
         users: [],
-        usersByFacebookId: {}
+        usersByFacebookId: {},
+        songs: {},
+        adminLog: [],
+        admins: {0: true}
     };
 } else {
     var database = JSON.parse(fs.readFileSync(DATABASE_PATH));

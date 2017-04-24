@@ -60,6 +60,18 @@ function getAlbumInfo(song, callback) {
             return;
         }
 
+        if (res.tags) {
+            if (res.tags.tag) {
+                var tags = res.tags.tag;
+
+                for (var i = 0; i < tags.length; i++) {
+                    if (tags[i].name) {
+                        song.tags.push(tags[i].name);
+                    }
+                }
+            }
+        }
+
         song.album = res.name;
         song.album_art = pickLargestImage(res.image);
         callback();

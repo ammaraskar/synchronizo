@@ -4,8 +4,9 @@ var app = require('../server').app;
 var database = require('../server').database;
 var SignedInUser = require('../models/User').SignedInUser;
 
-router.use('/room', require('./music_room'))
-router.use('/api', require('./api'))
+router.use('/room', require('./music_room'));
+router.use('/api', require('./api'));
+router.use('/admin', require('./admin'));
 
 
 router.get('/', function(req, res) {

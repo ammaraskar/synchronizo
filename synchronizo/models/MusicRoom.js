@@ -318,7 +318,7 @@ function Song(artist, album, title, filename) {
     this.uploadProgress = 0;
 
     this.duration = 0;
-    this.globalId = -1;
+    this.tags = [];
 }
 
 Song.prototype.setUploader = function(uploader) {
@@ -408,6 +408,7 @@ Song.prototype.shortSummary = function() {
         album: this.album || "Unknown",
         title: this.title || "Unknown",
         album_art: this.album_art,
+        tags: this.tags
     }
 }
 
