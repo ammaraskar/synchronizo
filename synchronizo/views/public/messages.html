@@ -1,0 +1,164 @@
+{% extends "base_navbar.html" %}
+
+{% block head %}
+<style>
+.chat-box {
+    height: 520px;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.chat-box li {
+    font-size: 105%;
+    margin-bottom: 8px;
+}
+
+.chat-panel {
+    height: 600px;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script>
+var AUTH_TOKEN = "{{ user.socketioToken }}";
+var currentConvo = -1;
+
+var socket = io();
+socket.on('connect', function(data) {
+    socket.emit('joinMessages', {authToken: AUTH_TOKEN});
+});
+
+function renderMessage(message) {
+    if (message.type == "text") {
+        var user = message.user;
+        var message = message.text;
+
+        var renderedMessage = $('<li><b></b> <div class="arrow_box"></div></li>');
+        renderedMessage.find('b').text(user);
+        renderedMessage.find('.arrow_box').text(message);
+    } else if (message.type == "html") {
+        var renderedMessage = $(message.text);
+    }
+
+     $(".chat-box").append(renderedMessage);
+}
+
+socket.on('newConvoMessage', function(message) {
+    renderMessage(message);
+
+    var chat_box = $(".chat-box");
+    chat_box.animate({ scrollTop: chat_box[0].scrollHeight }, 'fast');
+});
+
+function switchConversation(user_id) {
+    socket.emit('switchConvo', user_id, function(messages) {
+        currentConvo = user_id;
+        $(".start-conversation").removeClass('active');
+        $("#select-" + user_id).addClass('active');
+
+        console.log("switchConvo result");
+        console.log(messages);
+
+        for (var i = 0; i < messages.length; i++) {
+            renderMessage(messages[i]);
+        }
+
+        var chat_box = $(".chat-box");
+        chat_box.animate({ scrollTop: chat_box[0].scrollHeight }, 'fast');
+    });
+}
+</script>
+{% endblock %}
+
+{% block bodyend %}
+<script>
+function onSendMessage() {
+    var input_box = $("#chat-message-input");
+
+    var message = String(input_box.val());
+    if (message === "") {
+        return;
+    }
+
+    // empty out the box
+    input_box.val("");
+
+    socket.emit('sendConvoMessage', {user_id: currentConvo, message: message});
+}
+
+$(document).ready(function(){
+    $(".start-conversation").click(function(div) {
+        var id = $(this).attr("data-id");
+        switchConversation(id);
+    });
+
+    $("#chat-send-button").click(function() {
+        onSendMessage();
+    });
+    $('#chat-message-input').keypress(function (e) {
+        if (e.which == 13) {
+            onSendMessage();
+            return false;    //<---- Add this line
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Conversations</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="dropdown">
+                          <button class="btn btn-info dropdown-toggle" type="button" id="drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Start Conversation With
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                              {% for u in user.getFollowing() %}
+                                <li><a class="start-conversation" data-id="{{ u.id }}" href="#">{{ u.displayName }}</a></li>
+                              {% endfor %}
+                          </ul>
+                        </div>
+
+                        <div style="margin-top: 15px" class="list-group">
+                            {% for conversation in user.getConversations() %}
+                                <a id="select-{{conversation.other_user.id}}" data-id="{{ conversation.other_user.id }}"
+                                    href="#" class="list-group-item start-conversation">
+                                    {{ conversation.other_user.displayName }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Conversation with </div>
+                    <div class="panel-body chat-panel">
+                        <ul class="chat-box list-unstyled">
+                        </ul>
+
+                        <div style="padding:0" class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <label class="sr-only" for="chat-message-input">Message</label>
+                                    <input type="text" class="input-sm form-control" id="chat-message-input" placeholder="Message">
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="chat-send-button" type="submit" class="btn btn-primary btn-sm btn-block">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

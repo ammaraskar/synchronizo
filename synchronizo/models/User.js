@@ -18,6 +18,13 @@ User.prototype.summarize = function() {
     };
 }
 
+function Conversation(user1, user2) {
+    this.user1 = user1;
+    this.user2 = user2;
+
+    this.messages = [];
+}
+
 function SignedInUser(facebookId, displayName, socketioToken) {
     this.facebookId = facebookId;
     this.displayName = displayName;
@@ -31,6 +38,52 @@ function SignedInUser(facebookId, displayName, socketioToken) {
     this.following = {};
     this.blocked = {};
     this.songHistory = [];
+    this.conversations = {};
+}
+
+SignedInUser.prototype.getConversations = function() {
+    var conversations = [];
+
+    for (other_id in this.conversations) {
+        if (!this.conversations.hasOwnProperty(other_id)) {
+            continue;
+        }
+        var conversationId = this.conversations[other_id];
+        var conversation = database.conversations[conversationId];
+
+        conversations.push({
+            user1: conversation.user1,
+            user2: conversation.user2,
+            messages: conversation.messages,
+            other_user: SignedInUser.getById(other_id)
+        });
+    }
+
+    return conversations;
+}
+
+SignedInUser.prototype.getOrStartConversationWith = function(other_id) {
+    if (other_id in this.conversations) {
+        return database.conversations[this.conversations[other_id]];
+    }
+
+    if (other_id == this.id) {
+        return null;
+    }
+
+    var otherUser = SignedInUser.getById(other_id);
+    if (!otherUser) {
+        return null;
+    }
+
+    var conversation = new Conversation(this.id, otherUser.id);
+    var conversationId = database.conversations.length;
+
+    this.conversations[otherUser.id] = conversationId;
+    otherUser.conversations[this.id] = conversationId;
+
+    database.conversations.push(conversation);
+    return conversation;
 }
 
 SignedInUser.prototype.getLastSongListened = function() {

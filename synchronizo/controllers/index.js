@@ -35,6 +35,67 @@ router.get('/stats', function(req, res) {
     res.render('public/stats.html', {songs: sortedByPlays});
 });
 
+io.on('connection', function(socket) {
+    var user = null;
+
+    socket.on('joinMessages', function(data) {
+        var profile = app.locals.tokens[data.authToken];
+        if (!profile) {
+            socket.disconnect();
+            return;
+        }
+
+        user = SignedInUser.getById(profile.globalId);
+        socket.join(user.id);
+    });
+
+    socket.on('switchConvo', function(user_id, fn) {
+        if (!user) {
+            return;
+        }
+
+        var conversation = user.getOrStartConversationWith(user_id);
+        if (!conversation) {
+            return;
+        }
+        fn(conversation.messages);
+    });
+
+    socket.on('sendConvoMessage', function(data) {
+        console.log('sendConvoMessage');
+        console.log(data);
+        if (!user || !data.user_id || !data.message) {
+            return;
+        }
+
+        var conversation = user.getOrStartConversationWith(data.user_id);
+        if (!conversation) {
+            return;
+        }
+
+        var message = {
+            sender: user.id,
+            user: user.displayName,
+            text: data.message,
+            type: "text"
+        };
+        conversation.messages.push(message);
+
+        io.to(conversation.user1).emit('newConvoMessage', message);
+        io.to(conversation.user2).emit('newConvoMessage', message);
+    });
+});
+
+router.get('/messages', function(req, res) {
+    if (!req.user) {
+        res.status(402);
+        res.send("Not logged in");
+        return;
+    }
+
+    res.render('public/messages.html');
+});
+
 router.get('/user/:id', function(req, res) {
     var id = parseInt(req.params.id);
     if (isNaN(id)) {

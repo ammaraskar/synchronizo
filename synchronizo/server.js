@@ -28,7 +28,8 @@ if (!fs.existsSync(DATABASE_PATH)) {
         songs: {},
         adminLog: [],
         admins: {0: true},
-        reports: []
+        reports: [],
+        conversations: []
     };
 } else {
     var database = JSON.parse(fs.readFileSync(DATABASE_PATH));
