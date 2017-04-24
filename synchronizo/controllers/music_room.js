@@ -6,6 +6,7 @@ var ID3 = require('id3-parser');
 var multer = require('multer');
 var upload = multer({ dest: 'tmp/' });
 
+var addToAdminLog = require('../controllers/admin').addToAdminLog;
 var User = require('../models/User');
 var MusicRoom = require('../models/MusicRoom');
 var Song = MusicRoom.Song;
@@ -17,6 +18,7 @@ router.get('/create', function(req, res) {
     room.io = io;
 
     res.redirect(room.name);
+    addToAdminLog("Created room " + room.name);
 });
 
 router.get('/:roomName', function (req, res) {

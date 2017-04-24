@@ -1,4 +1,5 @@
 var database = require('../server').database;
+var timeSince = require('../helpers/time').timeSince;
 
 function User(username, socket) {
     this.username = username;
@@ -26,7 +27,9 @@ function SignedInUser(facebookId, displayName, socketioToken) {
     this.bio = "";
     this.visibility = "public";
     this.createdAt = new Date(0);
+    this.banned = false;
     this.following = {};
+    this.blocked = {};
     this.songHistory = [];
 }
 
@@ -36,31 +39,6 @@ SignedInUser.prototype.getLastSongListened = function() {
     }
     var id = this.songHistory[this.songHistory.length - 1].song;
     return database.songs[id];
-}
-
-function timeSince(date) {
-  var seconds = Math.floor((new Date() - date) / 1000);
-  var interval = Math.floor(seconds / 31536000);
-  if (interval > 1) {
-    return interval + " years";
-  }
-  interval = Math.floor(seconds / 2592000);
-  if (interval > 1) {
-    return interval + " months";
-  }
-  interval = Math.floor(seconds / 86400);
-  if (interval > 1) {
-    return interval + " days";
-  }
-  interval = Math.floor(seconds / 3600);
-  if (interval > 1) {
-    return interval + " hours";
-  }
-  interval = Math.floor(seconds / 60);
-  if (interval > 1) {
-    return interval + " minutes";
-  }
-  return Math.floor(seconds) + " seconds";
 }
 
 SignedInUser.prototype.getLastSongs = function() {
@@ -99,6 +77,14 @@ SignedInUser.prototype.getFollowing = function() {
 
 SignedInUser.prototype.isFollowing = function(other_id) {
     if (this.following[other_id]) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+SignedInUser.prototype.hasBlocked = function(other_id) {
+    if (this.blocked[other_id]) {
         return true;
     } else {
         return false;

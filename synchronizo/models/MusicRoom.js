@@ -3,6 +3,7 @@ var fs = require('fs');
 var mm = require('musicmetadata');
 var database = require('../server').database;
 var SignedInUser = require('../models/User').SignedInUser;
+var addToAdminLog = require('../controllers/admin').addToAdminLog;
 
 
 // Class declaration for a MusicRoom
@@ -215,6 +216,8 @@ MusicRoom.prototype.addSong = function(user, song) {
             message: "<b></b> is uploading <b></b>",
             subjects: [user.username, song.title]
         });
+
+        addToAdminLog(user.username + " (" + user.globalId + ") is uploading " + song.title + " in room " + this.name);
     }
 
     song.id = id;
@@ -229,6 +232,7 @@ MusicRoom.prototype.addUser = function(user) {
         message: "<b></b> joined the room",
         subjects: [user.username]
     });
+    addToAdminLog(user.username + " (" + user.globalId + ") joined room " + this.name);
 
     user.id = id;
     this.users.push(user);
@@ -242,6 +246,7 @@ MusicRoom.prototype.removeUser = function(user) {
         message: "<b></b> left the room",
         subjects: [user.username]
     });
+    addToAdminLog(user.username + " (" + user.globalId + ") left room " + this.name);
 
     this.users.splice(id, 1);
 }

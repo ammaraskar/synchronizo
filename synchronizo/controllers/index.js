@@ -61,6 +61,10 @@ router.get('/user/:id', function(req, res) {
         }
     }
 
+    if (req.user && user.hasBlocked(req.user.id)) {
+        isVisible = false;
+    }
+
     var joinDate = new Date(user.createdAt).toLocaleString();
     var lastSong = user.getLastSongListened();
     res.render('public/user_profile.html', {
@@ -103,37 +107,48 @@ router.post('/user/edit_profile', function(req, res) {
     res.redirect('/user/' + req.user.id);
 });
 
-router.post('/user/follow', function(req, res) {
+function validateIdRoute(req, res) {
     if (!req.user) {
         res.status(400);
         res.send("Not logged in");
-        return;
+        return false;
     }
     if (!req.body.user_id) {
         res.status(400);
-        res.send("User id to follow not specified");
-        return;
+        res.send("User id not specified");
+        return false;
     }
 
     var id = parseInt(req.body.user_id);
     if (id == NaN) {
         res.status(400);
         res.send("User id must be a number");
-        return;
+        return false;
     }
 
     if (id == req.user.id) {
         res.status(400);
-        res.send("Can't follow yourself");
+        res.send("User id can't be yourself");
+        return false;
+    }
+
+    var user = SignedInUser.getById(id);
+    if (!user) {
+        res.status(400);
+        res.send("user with id " + id + " not found");
+        return false;
+    }
+
+    return true;
+}
+
+router.post('/user/follow', function(req, res) {
+    if (!validateIdRoute(req, res)) {
         return;
     }
 
+    var id = parseInt(req.body.user_id);
     var userToFollow = SignedInUser.getById(id);
-    if (!userToFollow) {
-        res.status(400);
-        res.send("user with id " + id + " not found");
-        return;
-    }
 
     if (req.user.following[id]) {
         delete req.user.following[id];
@@ -141,6 +156,53 @@ router.post('/user/follow', function(req, res) {
         req.user.following[id] = true;
     }
 
+    res.redirect('/user/' + id);
+});
+
+router.post('/user/block', function(req, res) {
+    if (!validateIdRoute(req, res)) {
+        return;
+    }
+
+    var id = parseInt(req.body.user_id);
+    var user = SignedInUser.getById(id);
+
+    if (req.user.hasBlocked(user.id)) {
+        delete req.user.blocked[id];
+    } else {
+        req.user.blocked[id] = true;
+    }
+
+    res.redirect('/user/' + id);
+});
+
+router.post('/user/report', function(req, res) {
+    if (!validateIdRoute(req, res)) {
+        return;
+    }
+
+    var id = parseInt(req.body.user_id);
+    var user = SignedInUser.getById(id);
+
+    if (!req.body.report_message) {
+        res.status(400);
+        res.send("Report message not specified");
+        return;
+    }
+    var reportMessage = req.body.report_message;
+    if (reportMessage.length > 500) {
+        res.status(400);
+        res.send("Report message too long, max: 500 chars");
+        return;
+    }
+
+    var report = {
+        reporter: req.user.id,
+        target: id,
+        time: new Date(),
+        message: reportMessage
+    };
+    database.reports.push(report);
     res.redirect('/user/' + id);
 });
 

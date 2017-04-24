@@ -27,7 +27,8 @@ if (!fs.existsSync(DATABASE_PATH)) {
         usersByFacebookId: {},
         songs: {},
         adminLog: [],
-        admins: {0: true}
+        admins: {0: true},
+        reports: []
     };
 } else {
     var database = JSON.parse(fs.readFileSync(DATABASE_PATH));
@@ -107,6 +108,12 @@ if (config) {
 }
 
 app.use(function(req, res, next){
+    if (req.user && req.user.banned) {
+        res.status(403);
+        res.send("You are banned");
+        return;
+    }
+
     res.locals.user = req.user;
     res.locals.url = req.url;
     next();

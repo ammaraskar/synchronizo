@@ -3,7 +3,83 @@
 {% block content %}
     <div class="container">
         <div class="jumbotron">
-            <h1>Admin Panel</h1>
+            <h2>Admin Panel <a class="btn btn-primary pull-right" href="/admin/users" role="button">User Management</a></h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2>Reports</h2>
+                    </div>
+                    <div class="panel-body">
+                        {% if reports.length == 0 %}
+                            <h2>No pending reports!</h2>
+                        {% else %}
+                            <table class="table table-striped table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Reporter</th>
+                                        <th>Person Reported</th>
+                                        <th>Message</th>
+                                        <th>Resolve</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for report in reports %}
+                                        <tr>
+                                            <th>{{ loop.index }}</th>
+                                            <th>
+                                                <a href="/user/{{ report.reporter.id }}">
+                                                    {{ report.reporter.displayName }}
+                                                </a>
+                                            </th>
+                                            <th>
+                                                <a href="/user/{{ report.target.id }}">
+                                                    {{ report.target.displayName }}
+                                                </a>
+                                            <th>{{ report.message }}</th>
+                                            <th><a class="btn btn-sm btn-success" href="/admin/reportResolve/{{ loop.index0 }}">Resolve</a></th>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2>Action History</h2>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Action</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for entry in log %}
+                                    <tr>
+                                        <th>{{ loop.index }}</th>
+                                        <th>{{ entry.msg }}</th>
+                                        <th>{{ entry.time }} ago</th>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
