@@ -52,6 +52,9 @@ socket.on('newConvoMessage', function(message) {
 
 function switchConversation(user_id) {
     socket.emit('switchConvo', user_id, function(messages) {
+        var chat_box = $(".chat-box");
+        chat_box.empty();
+
         currentConvo = user_id;
         $(".start-conversation").removeClass('active');
         $("#select-" + user_id).addClass('active');
@@ -63,7 +66,6 @@ function switchConversation(user_id) {
             renderMessage(messages[i]);
         }
 
-        var chat_box = $(".chat-box");
         chat_box.animate({ scrollTop: chat_box[0].scrollHeight }, 'fast');
     });
 }
