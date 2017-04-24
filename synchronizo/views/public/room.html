@@ -110,7 +110,24 @@ wavesurfer.on('seek', function(progress) {
 
             <div class="col-md-5">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Who's here?</div>
+                    <div class="panel-heading">
+                        Who's here?
+                        {% if user %}
+                        <span class="pull-right">
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-xs dropdown-toggle" type="button" id="drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Invite
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    {% for u in user.getFollowing() %}
+                                      <li><a class="invite-to-room" data-id="{{ u.id }}" href="#">{{ u.displayName }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </span>
+                        {% endif %}
+                    </div>
                     <div class="panel-body">
                         <div id="user-list" class="images" style="display: inline;">
                         </div>

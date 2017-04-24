@@ -37,7 +37,7 @@ function renderMessage(message) {
         renderedMessage.find('b').text(user);
         renderedMessage.find('.arrow_box').text(message);
     } else if (message.type == "html") {
-        var renderedMessage = $(message.text);
+        var renderedMessage = $('<li>' + message.text + '</li>');
     }
 
      $(".chat-box").append(renderedMessage);

@@ -325,6 +325,11 @@ $( document ).ready(function() {
         }
     });
 
+    $(".invite-to-room").click(function(div) {
+        var id = $(this).attr("data-id");
+        socket.emit('inviteToRoom', id);
+    });
+
     $("#upload-button").click(function() {
         $('<input type="file" accept="audio/*">').on('change', function () {
             var file = this.files[0];

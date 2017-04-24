@@ -8,6 +8,7 @@ var upload = multer({ dest: 'tmp/' });
 
 var addToAdminLog = require('../controllers/admin').addToAdminLog;
 var User = require('../models/User');
+var SignedInUser = require('../models/User').SignedInUser;
 var MusicRoom = require('../models/MusicRoom');
 var Song = MusicRoom.Song;
 var createNewRoom = MusicRoom.createNewRoom;
@@ -181,6 +182,27 @@ io.on('connection', function(socket) {
 
         console.log(user.username + " joining " + room.name);
         onUserRoomJoin(room, user);
+    });
+
+    socket.on('inviteToRoom', function(other_id) {
+        if (!joinedRoom || !user) {
+            return;
+        }
+        if (user.globalId == -1) {
+            return;
+        }
+
+        var globalUser = SignedInUser.getById(user.globalId);
+        var conversation = globalUser.getOrStartConversationWith(other_id);
+
+        var message = {
+            text: user.username + ' invited you to room <a href="/room/' + joinedRoom.name + '">' + joinedRoom.name + '</a>',
+            type: "html"
+        };
+        conversation.messages.push(message);
+
+        io.to(conversation.user1).emit('newConvoMessage', message);
+        io.to(conversation.user2).emit('newConvoMessage', message);
     });
 
     socket.on('sendMessage', function(message) {
